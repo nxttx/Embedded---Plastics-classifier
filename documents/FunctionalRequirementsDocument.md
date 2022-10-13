@@ -181,8 +181,19 @@ Supportability requirements are about how easy it is to maintain the application
 <!--
 Provide low-fidelity user interface sketches. Map the sketches to use cases and other requirements if applicable.
  -->
+### 3.1 option 1 
+![image](./functionalrequirementsdocument/option1.png)
 
+### 3.2 option 2
+Another option is a web application where you can view various 'stats' and see what the camera sees in real time. You can also set the speed of the conveyor belt in this application. The product will simply turn on by plugging in a plug/a simple on off button. This button also counts as an emergency stop button. As soon as the system has power it will start up and the status will be shown by 3 different LEDs:
+1. power
+2. internet
+3. software is on.
+
+Leds 2 and 3 may come on at different times.
+As soon as the software is turned on, the tape will spin and start classifying.
 ## Conclusion
+In this document we have described the requirements for the project “Plastic classification with computer vision”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
 
 ## References
 MoSCoW Prioritization. (sd). Opgehaald van ProductPlan: https://www.productplan.com/glossary/moscow-prioritization/
