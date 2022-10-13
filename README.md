@@ -15,7 +15,7 @@ Making classifying plastics open source.
 ## Authors
 * **R. Boudewijn** - [nxttx](https://github.com/nxttx)
 * **N. Fikke** - [nadinefikke](https://github.com/nadinefikke)
-* **S. Hezemans** - [shinichihezemanshan](https://github.com/shinichihezemanshan)
+* **S. Hezemans** - [ShinichiHezemansHan](https://github.com/shinichihezemanshan)
 
 
 ## Software guidebook
