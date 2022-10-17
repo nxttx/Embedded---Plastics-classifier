@@ -120,6 +120,8 @@ Usability requirements are about how easy it is to use the application and the a
 | NFU-01 | Must | The product must be easy to turn on. (For example only plugging in the power and/or pressing an button) |
 | NFU-02 | Must | The product must have a quick start guide, which explains how to operate the product. |
 | NFU-03 | Should | The product should have a user manual, which explains the total functionalities of the product. |
+| NFU-04 | Could | There could be a web-interface that gives you access to stats (how many classifications, percentage of types etc) and to different settings. |
+| NFU-05 | Could | There could be a way to sort the items, for example with a flipper (think of pinball) or by air. |
 
 ### 2.2 Reliability
 <!--
