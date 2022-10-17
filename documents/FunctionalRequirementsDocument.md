@@ -183,6 +183,17 @@ Supportability requirements are about how easy it is to maintain the application
 <!--
 Provide low-fidelity user interface sketches. Map the sketches to use cases and other requirements if applicable.
  -->
+The machine can be turned on by a simple on/off switch, this switch can also be used as an emergency stop button. 
+The machine will start classifying as soon as the switch has been turned on.
+
+The machine will have 4 different LEDs to show the status of the machine. 
+
+- Led 1: Power LED, this LED will be on when the machine is turned on;
+- Led 2: Type of inserted plastic 1, this LED will be on when the machine has classified plastic 1;
+- Led 3: Type of inserted plastic 2, this LED will be on when the machine has classified plastic 2;
+- Led 4: Ignore, this LED will be used to show the status of the machine, for example if the machine is busy classifying or if the machine is idle.
+
+The machine will have a web interface where you can view various 'stats' and see what the camera sees in real time. You can also set the speed of the conveyor belt in this application.
 ### 3.1 option 1 
 ![image](./functionalrequirementsdocument/option1.png)
 
@@ -194,6 +205,10 @@ Another option is a web application where you can view various 'stats' and see w
 
 Leds 2 and 3 may come on at different times.
 As soon as the software is turned on, the tape will spin and start classifying.
+
+### 3.3 Option 3
+The operator powers on the conveyer belt and the single board computer (SBC). The operator can start the software in the terminal. The plastic type is shown in the terminal. 
+
 ## Conclusion
 In this document we have described the requirements for the project “Classifying plastics”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
 
