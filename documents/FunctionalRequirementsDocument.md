@@ -71,7 +71,7 @@ Mr. A. Hendriks
 In this document we will describe the functional requirements of the project.
 
 ### Overall Description 
-This document describes the requirements for the project “Plastic recognition with AI”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
+This document describes the requirements for the project “Classifying plastics”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
 
 ### Operating Environment 
 The machine will be used in the Circular Lab of the HAN Academy of Engineering and Automotive. This machine will be placed in the Circular Lab, where it will be used to classify the plastic waste.
@@ -193,7 +193,7 @@ Another option is a web application where you can view various 'stats' and see w
 Leds 2 and 3 may come on at different times.
 As soon as the software is turned on, the tape will spin and start classifying.
 ## Conclusion
-In this document we have described the requirements for the project “Plastic classification with computer vision”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
+In this document we have described the requirements for the project “Classifying plastics”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
 
 ## References
 MoSCoW Prioritization. (sd). Opgehaald van ProductPlan: https://www.productplan.com/glossary/moscow-prioritization/
