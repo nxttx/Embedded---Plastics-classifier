@@ -71,7 +71,7 @@ Mr. A. Hendriks
 In this document we will describe the functional requirements of the project.
 
 ### Overall Description 
-This document describes the requirements for the project “Plastic recognition with AI”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
+This document describes the requirements for the project “Classifying plastics”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
 
 ### Operating Environment 
 The machine will be used in the Circular Lab of the HAN Academy of Engineering and Automotive. This machine will be placed in the Circular Lab, where it will be used to classify the plastic waste.
@@ -120,6 +120,8 @@ Usability requirements are about how easy it is to use the application and the a
 | NFU-01 | Must | The product must be easy to turn on. (For example only plugging in the power and/or pressing an button) |
 | NFU-02 | Must | The product must have a quick start guide, which explains how to operate the product. |
 | NFU-03 | Should | The product should have a user manual, which explains the total functionalities of the product. |
+| NFU-04 | Could | There could be a web-interface that gives you access to stats (how many classifications, percentage of types etc) and to different settings. |
+| NFU-05 | Could | There could be a way to sort the items, for example with a flipper (think of pinball) or by air. |
 
 ### 2.2 Reliability
 <!--
@@ -181,6 +183,17 @@ Supportability requirements are about how easy it is to maintain the application
 <!--
 Provide low-fidelity user interface sketches. Map the sketches to use cases and other requirements if applicable.
  -->
+The machine can be turned on by a simple on/off switch, this switch can also be used as an emergency stop button. 
+The machine will start classifying as soon as the switch has been turned on.
+
+The machine will have 4 different LEDs to show the status of the machine. 
+
+- Led 1: Power LED, this LED will be on when the machine is turned on;
+- Led 2: Type of inserted plastic 1, this LED will be on when the machine has classified plastic 1;
+- Led 3: Type of inserted plastic 2, this LED will be on when the machine has classified plastic 2;
+- Led 4: Ignore, this LED will be used to show the status of the machine, for example if the machine is busy classifying or if the machine is idle.
+
+The machine will have a web interface where you can view various 'stats' and see what the camera sees in real time. You can also set the speed of the conveyor belt in this application.
 ### 3.1 option 1 
 ![image](./functionalrequirementsdocument/option1.png)
 
@@ -192,8 +205,12 @@ Another option is a web application where you can view various 'stats' and see w
 
 Leds 2 and 3 may come on at different times.
 As soon as the software is turned on, the tape will spin and start classifying.
+
+### 3.3 Option 3
+The operator powers on the conveyer belt and the single board computer (SBC). The operator can start the software in the terminal. The plastic type is shown in the terminal. 
+
 ## Conclusion
-In this document we have described the requirements for the project “Plastic classification with computer vision”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
+In this document we have described the requirements for the project “Classifying plastics”. The goal of this project is to classify different types of plastics with the help of computer vision artificial intelligence (AI). For more information about the project, please see the Plan of approach.
 
 ## References
 MoSCoW Prioritization. (sd). Opgehaald van ProductPlan: https://www.productplan.com/glossary/moscow-prioritization/
