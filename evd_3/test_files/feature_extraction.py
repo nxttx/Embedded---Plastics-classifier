@@ -3,8 +3,6 @@ import numpy as np
 from math import sqrt
 import os
 
-from sympy import per
-
 features = ["area", "perimeter", "aspect_ratio", "extent", "pa_ratio"]
 
 
