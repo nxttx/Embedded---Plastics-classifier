@@ -194,7 +194,11 @@ The machine will have 4 different LEDs to show the status of the machine.
 - Led 4: Ignore, this LED will be used to show the status of the machine, for example if the machine is busy classifying or if the machine is idle.
 
 The machine will have a web interface where you can view various 'stats' and see what the camera sees in real time. You can also set the speed of the conveyor belt in this application.
+
+![image](./functionalrequirementsdocument/Setup.png)
+
 ### 3.1 option 1 
+In option one are drawn two options. The first option is a little device on which you can see what type of plastic is on the belt (this can be seen on a LCD screen). It also has a start and a stop button. The second option is a bit less advanced, it has on the side of the conveyor-belt a button for on and off. Furthermore, it has a box which contains a camera and seven LEDs for indication: each individual object and one for ignore. 
 ![image](./functionalrequirementsdocument/option1.png)
 
 ### 3.2 option 2
