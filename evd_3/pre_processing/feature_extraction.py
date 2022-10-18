@@ -11,6 +11,9 @@ def extract_features(image):
     contours, hierarchy = cv2.findContours(
         image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
+    if (len(contours) < 1):
+        return np.array((0, 0, 0, 0, 0, 0))
+
     contour = max(contours, key=cv2.contourArea)
 
     area = cv2.contourArea(contour)
