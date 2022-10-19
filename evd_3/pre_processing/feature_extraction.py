@@ -50,7 +50,7 @@ def extract_features(image):
 
     cv2.imshow("intermediate", dst)
 
-    return np.array((area, perimeter, aspect_ratio, extend, pa_ratio, number_of_hull_defects))
+    return [area, perimeter, aspect_ratio, extend, pa_ratio, number_of_hull_defects]
 
 
 if __name__ == "__main__":

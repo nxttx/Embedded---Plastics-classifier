@@ -27,7 +27,7 @@ for label in classes:
 
         binary_image = remove_background(image)
 
-        features = list(extract_features(binary_image))
+        features = extract_features(binary_image)
 
         row = [label]
         row.extend(features)
