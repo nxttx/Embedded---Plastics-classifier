@@ -201,7 +201,7 @@ display.plot()
 plt.show()
 
 
-# In[ ]:
+# In[28]:
 # Overfitting and underfitting graph
 
 from sklearn.model_selection import learning_curve
@@ -225,11 +225,7 @@ plt.tight_layout()
 plt.show()
 
 
-
-
-
-
-
-
-
-
+# In[29]:
+# export model for later use
+import joblib
+joblib.dump(model, 'model.pkl')
