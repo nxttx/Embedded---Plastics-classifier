@@ -3,8 +3,7 @@ import numpy as np
 import os
 import glob
 
-import time # for timing
-
+import time  # for timing
 
 
 def remove_background(img):
@@ -14,14 +13,14 @@ def remove_background(img):
         output: binary image
     '''
 
-    img = cv.blur(img,(3,3))
+    img = cv.blur(img, (3, 3))
 
     # convert to HSV
     img_hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
 
     # define range of blue color in HSV
-    light_blue = (0,50,0)
-    dark_blue = (255,255,255)
+    light_blue = (0, 50, 0)
+    dark_blue = (255, 255, 255)
 
     # Mark pixels outside background color range
     mask = cv.inRange(img_hsv, light_blue, dark_blue)
@@ -45,7 +44,8 @@ def remove_background(img):
         if blob is too small, remove it
     '''
     #  find contours
-    contours, hierarchy = cv.findContours(res, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv.findContours(
+        res.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
     #  find the biggest area
     max_area = 0
@@ -62,52 +62,44 @@ def remove_background(img):
         if (area < 10000):
             cv.drawContours(res, contours, i, 0, -1)
 
-
     return res
 
 
+if __name__ == "__main__":
+    # ask for the path to the folder with the images
+    # path = input("Enter the path to the folder with the images: ")
+    path = '/home/shinichi/dev/han/minorcvml/project/Embedded---Plastics-classifier/evd_3/original_dataset/hangloose'
 
+    # path to the new folder where the images will be saved
+    path_new = path + "_temp"
 
+    # if folder does not exist, create it
+    if not os.path.exists(path_new):
+        os.makedirs(path_new)
 
-# ask for the path to the folder with the images
-# path = input("Enter the path to the folder with the images: ")
-path = 'C:/Users/Rober/Documents/1.0 ICA/Leerjaar 4/Minor/Project/repository/Embedded---Plastics-classifier/evd_3/original_dataset/ignore'
+    # create a list with all the images
+    images = glob.glob(path + "/*.jpg")
 
-# path to the new folder where the images will be saved
-path_new = path + "_temp"
+    # loop over all images
+    for image in images:
+        # read the image
+        img = cv.imread(image)
+        res = remove_background(img)
 
-# if folder does not exist, create it
-if not os.path.exists(path_new):
-    os.makedirs(path_new)
+        # save the image
+        # cv.imwrite(path_new + "/" + os.path.basename(image), res)
 
-# create a list with all the images
-images = glob.glob(path + "/*.jpg")
+        # save image with timestamp
+        cv.imwrite(path_new + "/" + os.path.basename(image) +
+                   str(time.time()) + ".jpg", res)
 
-# loop over all images
-for image in images:
-    # read the image
-    img = cv.imread(image)
-    res = remove_background(img)
+        # show the image
+        cv.imshow("image", res)
 
-    # save the image
-    # cv.imwrite(path_new + "/" + os.path.basename(image), res)
+        # check if the user wants to continue
+        key = cv.waitKey(5)
+        if key == 27:  # ESC
+            break
 
-    # save image with timestamp
-    cv.imwrite(path_new + "/" + os.path.basename(image) + str(time.time())  + ".jpg", res)
-
-
-    # show the image
-    cv.imshow("image", res)
-
-    # check if the user wants to continue 
-    key = cv.waitKey(5)
-    if key == 27: # ESC
-        break
-
-
-# clean up
-cv.destroyAllWindows()
-
-
-
-
+    # clean up
+    cv.destroyAllWindows()
