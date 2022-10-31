@@ -1,12 +1,20 @@
 # import model and predict with the camera
 import cv2
-import numpy as np
 import joblib
+model = joblib.load('model.pkl')
+
+
+# now import helpers
+import sys
+# get current path and remove the last folder
+path = sys.path[0]
+path = path[:-10]
+
+sys.path.append(path + '\pre_processing')
+
 from feature_extraction import extract_features
 from removing_background import remove_background
-import sklearn
 
-model = joblib.load('\model.pkl')
 
 cap = cv2.VideoCapture(0)
 
