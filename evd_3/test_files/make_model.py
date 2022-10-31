@@ -228,4 +228,7 @@ plt.show()
 # In[29]:
 # export model for later use
 import joblib
-joblib.dump(model, 'model.pkl')
+joblib.dump(model, 'model_joblib.pkl')
+
+import pickle
+pickle.dump(model, open('model_pickle.pkl', 'wb'))
