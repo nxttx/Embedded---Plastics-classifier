@@ -230,5 +230,3 @@ plt.show()
 import joblib
 joblib.dump(model, 'model_joblib.pkl')
 
-import pickle
-pickle.dump(model, open('model_pickle.pkl', 'wb'))
