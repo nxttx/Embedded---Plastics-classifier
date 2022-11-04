@@ -87,3 +87,7 @@ if __name__ == '__main__':
     fig0.show()
 
     plt.show()
+
+    dataset = pd.concat([hangloose, ignore, paper, rock, scissors])
+
+    dataset.to_csv('cleaned_dataset.csv')
