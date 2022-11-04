@@ -18,6 +18,12 @@ sys.path.append(path + '\pre_processing')
 from feature_extraction import extract_features
 from removing_background import remove_background
 
+'''
+ ignore feature names warning
+'''
+import warnings
+warnings.filterwarnings("ignore")
+
 
 if __name__ == '__main__':
     # open video stream
