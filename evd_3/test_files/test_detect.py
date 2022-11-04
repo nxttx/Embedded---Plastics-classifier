@@ -1,10 +1,13 @@
-# import model and predict with the camera
+'''
+ Import model and predict with the camera
+'''
 import cv2
 import joblib
 model = joblib.load('model_joblib.pkl')
 
-
-# now import helpers
+'''
+ Import helpers
+'''
 import sys
 # get current path and remove the last folder
 path = sys.path[0]
@@ -16,26 +19,38 @@ from feature_extraction import extract_features
 from removing_background import remove_background
 
 
-cap = cv2.VideoCapture(0)
+if __name__ == '__main__':
+    # open video stream
+    cap = cv2.VideoCapture(0)
 
-while True:
-    _, frame = cap.read()
-    frame = cv2.flip(frame, 1)
-    frame = cv2.resize(frame, (320, 240))
-    binary_image = remove_background(frame)
-    try:
-        features = extract_features(binary_image)
-    except:
-        continue
-    cv2.imshow("frame", frame)
-    cv2.imshow("binary", binary_image)
+    while True:
+        # read frame
+        _, frame = cap.read()
+        frame = cv2.flip(frame, 1)
+        frame = cv2.resize(frame, (320, 240))
+        # remove background
+        binary_image = remove_background(frame)
 
-    # now we have the features, we can predict
-    prediction = model.predict([features])
-    print(prediction)
+        # show video and binary image
+        cv2.imshow("frame", frame)
+        cv2.imshow("binary", binary_image)
 
-    if cv2.waitKey(500) & 0xFF == ord('q'):
-        break
+        try:
+            # extract features
+            features = extract_features(binary_image)
+        except:
+            # if no hand is detected
+            continue
 
-cap.release()
-cv2.destroyAllWindows()
+        # now we have the features, we can predict
+        prediction = model.predict([features])
+        print(prediction)
+
+        # Check if the user wants to quit
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # close the video stream
+    cap.release()
+    # close all windows
+    cv2.destroyAllWindows()
