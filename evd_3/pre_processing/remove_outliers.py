@@ -3,18 +3,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-def remove_out_liers(data):
-    # get standard deviation of data 
-    std = data.std()
-    # for every row in data
-    for index, row in data.iteritems():
-        # if the value is bigger or smaller than 3 std
-        if row > (std * 3) or row < (std * -3):
-            # set row to none 
-            data[index] = None
+# def remove_out_liers(data):
+#     # get standard deviation of data 
+#     std = data.std()
+#     # for every row in data
+#     for index, row in data.iteritems():
+#         # if the value is bigger or smaller than 3 std
+#         if row > (std * 3) or row < (std * -3):
+#             # set row to none 
+#             data[index] = None
 
-    data
-    return data
+#     data
+#     return data
 
 if __name__ == '__main__':
     # get the data
@@ -36,7 +36,6 @@ if __name__ == '__main__':
     rock = data[data['0'] == 'rock']
     scissors = data[data['0'] == 'scissors']
 
-
     # # plot every colom into a histogram
     # for colom in colom_names:
     #     if colom == '0':
@@ -52,14 +51,62 @@ if __name__ == '__main__':
     #     plt.clf()
 
 
-    #  now remove outliers from the data wich ar bigger or smaller than 3 std
-    for colom in colom_names:
-        if colom == '0':
-            continue        
-        ignore[colom] = remove_out_liers(ignore[colom])
-        paper[colom] = remove_out_liers(paper[colom])
-        rock[colom] = remove_out_liers(rock[colom])
-        scissors[colom] = remove_out_liers(scissors[colom])
+
+    # calculate the mean of the data
+    hangloose_mean = hangloose.mean()
+    ignore_mean = ignore.mean()
+    paper_mean = paper.mean()
+    rock_mean = rock.mean()
+    scissors_mean = scissors.mean()
+
+    # calculate the standard deviation of the data
+    hangloose_std = hangloose.std()
+    ignore_std = ignore.std()
+    paper_std = paper.std()
+    rock_std = rock.std()
+    scissors_std = scissors.std()
+
+    # remove outliers with z-score
+    threshold = 3
+    for i in hangloose:
+      z = (hangloose[i] - hangloose_mean[i]) / hangloose_std[i]
+      if z > threshold or z < -threshold:
+        hangloose[i] = None
+
+    for i in ignore:
+      z = (ignore[i] - ignore_mean[i]) / ignore_std[i]
+      if z > threshold or z < -threshold:
+        ignore[i] = None
+
+    for i in paper:
+      z = (paper[i] - paper_mean[i]) / paper_std[i]
+      if z > threshold or z < -threshold:
+        paper[i] = None
+
+    for i in rock:
+      z = (rock[i] - rock_mean[i]) / rock_std[i]
+      if z > threshold or z < -threshold:
+        rock[i] = None
+
+    for i in scissors:
+      z = (scissors[i] - scissors_mean[i]) / scissors_std[i]
+      if z > threshold or z < -threshold:
+        scissors[i] = None
+
+
+
+
+
+
+
+    # #  now remove outliers from the data wich ar bigger or smaller than 3 std
+    # for colom in colom_names:
+    #     if colom == '0':
+    #         continue        
+    #     ignore[colom] = remove_out_liers(ignore[colom])
+    #     paper[colom] = remove_out_liers(paper[colom])
+    #     rock[colom] = remove_out_liers(rock[colom])
+    #     scissors[colom] = remove_out_liers(scissors[colom])
 
     # Remove every row with a none value because it is under standard deviation
     hangloose = hangloose.dropna()
@@ -82,7 +129,6 @@ if __name__ == '__main__':
         plt.legend(loc='upper right')
         plt.show()
         plt.clf()
-
 
 
 
