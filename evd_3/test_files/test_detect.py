@@ -1,10 +1,7 @@
 # import model and predict with the camera
 import cv2
-# import joblib
-# model = joblib.load('model_joblib.pkl')
-import pickle
-model = pickle.load(open('model_pickle.pkl', 'rb'))
-
+import joblib
+model = joblib.load('model_joblib.pkl')
 
 
 # now import helpers
