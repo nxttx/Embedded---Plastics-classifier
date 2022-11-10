@@ -1,0 +1,10 @@
+# Dataset paths relative to the yolov5 folder
+train: ../data/images/train
+val:   ../data/images/val
+test:  ../data/images/test
+
+# Number of classes
+nc: 4
+
+# Class names 0 - hangloose, 1 - paper, 2 - rock, 3 - scissors
+names: ['hangloose', 'paper', 'rock', 'scissors']
