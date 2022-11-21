@@ -8,7 +8,7 @@ from skimage import color
 from skimage import data, exposure, img_as_float
 import matplotlib.pyplot as plt
 
-# scale the images
+# scale the images (this need to change to a function that keeps the same resolution as before)
 def scale_image_random(img):
     '''
         function that scales the image randomly
@@ -93,8 +93,11 @@ def change_brightness_random(img):
         input: image (Mat object)
         output: image with changed brightness (Mat object)
     '''
+    # histogram equalization
+    # equ = cv2.equalizeHist(img)
+
     # convert to hsv
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(equ, cv2.COLOR_BGR2HSV)
     # change the brightness
     brightness = random.randint(-50, 50)
     h,s,v = cv2.split(hsv)
