@@ -28,6 +28,8 @@ cv2.imshow("keyboard layout", img)
 
 time.sleep(1.0)
 
+lastTime = time.time_ns()
+
 while True:
     # grab the frame from the threaded video file stream
     ret, frame = cam.read()
@@ -52,6 +54,11 @@ while True:
         if not os.path.exists(p):
             os.makedirs(p)
         # construct the path to the output image
-        p = os.path.sep.join([p, "{}.png".format(int(time.time_ns()))])
-        print("[INFO] saving frame: {}".format(p))
+        currentTime = time.time_ns()
+        p = os.path.sep.join([p, "{}.png".format(int(currentTime))])
+        frameTime = currentTime - lastTime
+        print("[INFO] saving frame: {}, with frame time of {}ns, {} FPS".format(
+            p, frameTime, 1e9/frameTime))
         cv2.imwrite(p, frame)
+
+        lastTime = currentTime
