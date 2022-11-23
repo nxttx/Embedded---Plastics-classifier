@@ -7,6 +7,7 @@ import random
 from skimage import color
 from skimage import data, exposure, img_as_float
 import matplotlib.pyplot as plt
+import time  # for timing
 
 # scale the images (this need to change to a function that keeps the same resolution as before)
 def scale_image_random(img):
@@ -18,7 +19,7 @@ def scale_image_random(img):
     a = random.randint(1, 640)
     # resolution: 640 x 480
     size = (a, round(0.75*a)) # (width, height) and 0.75 is the aspect ratio
-    output = cv2.resize(img, size, interpolation=cv2.INTER_AREA)
+    output = cv2.resize(img, size, interpolation=cv2.INTER_LINEAR_EXACT)
     return output
 
 
@@ -93,29 +94,15 @@ def change_brightness_random(img):
         input: image (Mat object)
         output: image with changed brightness (Mat object)
     '''
-    # histogram equalization
-    # equ = cv2.equalizeHist(img)
-
-    # convert to hsv
-    hsv = cv2.cvtColor(equ, cv2.COLOR_BGR2HSV)
-    # change the brightness
-    brightness = random.randint(-50, 50)
-    h,s,v = cv2.split(hsv)
-
-    vnew = np.mod(v + brightness, 255).astype(np.uint8)
-
-    hsv_new = cv2.merge([h,s,vnew])
-
-    # convert back to bgr
-    output = cv2.cvtColor(hsv_new, cv2.COLOR_HSV2BGR)
-
-    # normalize the image
-    output = cv2.normalize(output, output, 10, 200, cv2.NORM_MINMAX) 
-
-        
+    alpha = random.uniform(1.0, 1.35) # Simple contrast control
+    beta = random.uniform(0.0, 20.0)   # Simple brightness control
+    
+    # Do the operation new_image(i,j) = alpha*image(i,j) + beta
+    # new_image = cv.convertScaleAbs(image, alpha=alpha, beta=beta)
+    output = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+            
     return output
     
-
 # rotate on hsv values
 def rotate_hsv_random(img):
     '''
@@ -137,6 +124,24 @@ def rotate_hsv_random(img):
     output = cv2.cvtColor(hsv_new, cv2.COLOR_HSV2BGR)
     return output
 
+# Change to canny edge detection
+def canny_edge(img):
+    '''
+        function that changes the image to canny edge detection randomly
+        input: image (Mat object)
+        output: canny edge detection image (Mat object)
+    '''
+    # convert to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # blur the image
+    blur = cv2.GaussianBlur(gray, (3,3), 0)
+    # apply canny edge detection
+    canny = cv2.Canny(blur, 10, 160)                        # needs finetuning for fully edge detection
+    # convert back to bgr
+    canny = cv2.cvtColor(canny, cv2.COLOR_GRAY2BGR)
+    # add canny image to the original image
+    output = cv2.addWeighted(img, 0.9, canny, 0.9, 0)
+    return output
 
 
 
@@ -146,10 +151,31 @@ def rotate_hsv_random(img):
 img = cv2.imread('C:\\Users\\nadin\\Documents\\GitHub\\Embedded---Plastics-classifier\\blok2\\v1\\data\\test_img.jpg')
 cv2.imshow("original", img)
 # scale image
-while(cv2.waitKey(500) != 27):
-    img2 = change_brightness_random(img)
-    # show image
-    cv2.imshow("image", img2)
+# while(cv2.waitKey(500) != 27):
+img2 = scale_image_random(img)
+# show image
+cv2.imshow("image", img2)
+
+path = 'C:/Users/nadin/Documents/GitHub/Embedded---Plastics-classifier/blok2/v1/augmented_dataset/rock'
+
+# path to the new folder where the images will be saved
+path_new = path + "_temp"
+
+# if folder does not exist, create it
+if not os.path.exists(path_new):
+    os.makedirs(path_new)
+
+# create a list with all the images
+images = glob.glob(path + "/*.jpg")
+
+# loop over all images
+for image in images:
+    # save the image
+    # cv.imwrite(path_new + "/" + os.path.basename(image), res)
+
+    # save image with timestamp
+    cv2.imwrite(path_new + "/" + os.path.basename(image) +
+                str(time.time()) + ".jpg", img2)
 
 # cv2.waitKey(0)
 cv2.destroyAllWindows()
