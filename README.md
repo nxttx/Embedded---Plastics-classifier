@@ -19,3 +19,4 @@ Making classifying plastics open source.
 
 
 ## Software guidebook
+Jetson nano test
