@@ -26,6 +26,8 @@ img = cv2.imread(os.path.join("blok2", "conveyerAcquisition",
                  "scripts", "keyboard_layout.png"))
 cv2.imshow("keyboard layout", img)
 
+delayTime = 1.0 / 5  # 5 FPS
+
 time.sleep(1.0)
 
 lastTime = time.time_ns()
@@ -62,3 +64,5 @@ while True:
         cv2.imwrite(p, frame)
 
         lastTime = currentTime
+
+        time.sleep(delayTime - frameTime / 1e9)
