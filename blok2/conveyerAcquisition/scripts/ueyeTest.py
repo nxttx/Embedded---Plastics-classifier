@@ -14,8 +14,8 @@ def main():
     print(f"SetColorMode IS_CM_BGR8_PACKED returns {ret}")
 
     # set region of interest
-    width = 1280
-    height = 1080
+    width = 640
+    height = 480
     rect_aoi = ueye.IS_RECT()
     rect_aoi.s32X = ueye.int(0)
     rect_aoi.s32Y = ueye.int(0)
@@ -52,7 +52,7 @@ def main():
                             bitspixel, lineinc, copy=True)
         img = np.reshape(img, (height, width, 3))
         cv2.imshow('uEye Python Example (q to exit)', img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(16) & 0xFF == ord('q'):
             break
     cv2.destroyAllWindows()
 
