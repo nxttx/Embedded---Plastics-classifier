@@ -59,7 +59,7 @@ def main():
                 "f": "fork",
                 "b": "bottle",
                 "a": "bag",
-                "y": "syrofoam",
+                "y": "styrofoam",
                 "c": "bottlecap",
                 "p": "pen"}
 
@@ -93,7 +93,9 @@ def main():
                 os.makedirs(p)
             # construct the path to the output image
             currentTime = time.time()
-            p = os.path.sep.join([p, "{}.png".format(int(currentTime * 1000))])
+            # let current time be epoch with millisecond precision
+            currentTime = int(currentTime * 1000)
+            p = os.path.sep.join([p, "{}.png".format(int(currentTime))])
             frameTime = currentTime - lastTime
             print("[INFO] saving frame: {}, with frame time of {}ms, {} FPS".format(
                 p, frameTime, 1e9/frameTime))

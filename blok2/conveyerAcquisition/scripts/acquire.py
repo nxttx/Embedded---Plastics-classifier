@@ -11,7 +11,7 @@ mappings = {"i": "ignore",
             "f": "fork",
             "b": "bottle",
             "a": "bag",
-            "y": "syrofoam",
+            "y": "styrofoam",
             "c": "bottlecap",
             "p": "pen"}
 
