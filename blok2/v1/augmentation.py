@@ -22,7 +22,6 @@ def shear_img_random(img):
 
     v1 = [1, (random.random() - 0.5) * shearCoefficient, 0]
     v2 = [(random.random() - 0.5) * shearCoefficient, 1, 0]
-    M = np.float32([v1, v2])
 
     M = np.matmul(np.float32(
         [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), np.float32([v1, v2, [0, 0, 1]]))
@@ -34,16 +33,28 @@ def shear_img_random(img):
     return output
 
 
-def scale_image_random(img):
+def zoom_image_random(img):
     '''
         function that scales the image randomly
         input: image (Mat object)
         output: translated image (Mat object)
     '''
-    a = random.randint(1, 640)
-    # resolution: 640 x 480
-    size = (a, round(0.75*a))  # (width, height) and 0.75 is the aspect ratio
-    output = cv2.resize(img, size, interpolation=cv2.INTER_LINEAR_EXACT)
+    height, width = img.shape[:2]
+
+    zoomCoefficient = 0.2
+
+    zoomFactor = random.uniform(1 - zoomCoefficient, 1 + zoomCoefficient)
+
+    v1 = [zoomFactor, 0, 0]
+    v2 = [0, zoomFactor, 0]
+
+    M = np.matmul(np.float32(
+        [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), np.float32([v1, v2, [0, 0, 1]]))
+    M = np.matmul(M, np.float32(
+        [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))
+
+    output = cv2.warpAffine(img, M[:2], (width, height))
+
     return output
 
 
@@ -187,7 +198,7 @@ img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
 cv2.imshow("original", img)
 # scale image
 while (cv2.waitKey(500) != 27):
-    img2 = shear_img_random(img)
+    img2 = zoom_image_random(img)
 # show image
     cv2.imshow("image", img2)
 
