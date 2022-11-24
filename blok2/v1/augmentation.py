@@ -4,12 +4,36 @@ import numpy as np
 import os
 import glob
 import random
-from skimage import color
-from skimage import data, exposure, img_as_float
 import matplotlib.pyplot as plt
 import time  # for timing
 
 # scale the images (this need to change to a function that keeps the same resolution as before)
+
+
+def shear_img_random(img):
+    '''
+        function that shears the image randomly
+        input: image (Mat object)
+        output: sheared image (Mat object)
+    '''
+    height, width = img.shape[:2]
+
+    shearCoefficient = 0.5
+
+    v1 = [1, (random.random() - 0.5) * shearCoefficient, 0]
+    v2 = [(random.random() - 0.5) * shearCoefficient, 1, 0]
+    M = np.float32([v1, v2])
+
+    M = np.matmul(np.float32(
+        [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), np.float32([v1, v2, [0, 0, 1]]))
+    M = np.matmul(M, np.float32(
+        [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))
+
+    output = cv2.warpAffine(img, M[:2], (width, height))
+
+    return output
+
+
 def scale_image_random(img):
     '''
         function that scales the image randomly
@@ -18,7 +42,7 @@ def scale_image_random(img):
     '''
     a = random.randint(1, 640)
     # resolution: 640 x 480
-    size = (a, round(0.75*a)) # (width, height) and 0.75 is the aspect ratio
+    size = (a, round(0.75*a))  # (width, height) and 0.75 is the aspect ratio
     output = cv2.resize(img, size, interpolation=cv2.INTER_LINEAR_EXACT)
     return output
 
@@ -34,6 +58,8 @@ def flip_image_random(img):
     return output
 
 # rotate the images
+
+
 def rotate_image_random(img):
     '''
         function that rotates the image randomly
@@ -47,6 +73,8 @@ def rotate_image_random(img):
     return cv2.rotate(img, a)
 
 # translate the images
+
+
 def translate_image_random(img):
     '''
         function that translates the image randomly
@@ -66,6 +94,8 @@ def translate_image_random(img):
     return output
 
 # higher contrast
+
+
 def higher_contrast_random(img):
     '''
         function that highers the contrast of the image randomly
@@ -79,31 +109,35 @@ def higher_contrast_random(img):
     # create random float contrast
     contrast = random.uniform(0.0, 1.8)
     # apply CLAHE
-    clahe = cv2.createCLAHE(clipLimit=contrast, tileGridSize=(8,8))
+    clahe = cv2.createCLAHE(clipLimit=contrast, tileGridSize=(8, 8))
     cl = clahe.apply(L)
     # merge the channels
-    Limg = cv2.merge((cl,A,B))
+    Limg = cv2.merge((cl, A, B))
     # convert back to BGR
     output = cv2.cvtColor(Limg, cv2.COLOR_LAB2BGR)
     return output
 
 # change brightness
+
+
 def change_brightness_random(img):
     '''
         function that changes the brightness of the image randomly
         input: image (Mat object)
         output: image with changed brightness (Mat object)
     '''
-    alpha = random.uniform(1.0, 1.35) # Simple contrast control
+    alpha = random.uniform(1.0, 1.35)  # Simple contrast control
     beta = random.uniform(0.0, 20.0)   # Simple brightness control
-    
+
     # Do the operation new_image(i,j) = alpha*image(i,j) + beta
     # new_image = cv.convertScaleAbs(image, alpha=alpha, beta=beta)
     output = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
-            
+
     return output
-    
+
 # rotate on hsv values
+
+
 def rotate_hsv_random(img):
     '''
         function that rotates the image randomly
@@ -114,17 +148,19 @@ def rotate_hsv_random(img):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # rotate the hue channel
     rotation = random.randint(-10, 10)
-    h,s,v = cv2.split(hsv)
+    h, s, v = cv2.split(hsv)
 
     hnew = np.mod(h + rotation, 180).astype(np.uint8)
 
-    hsv_new = cv2.merge([hnew,s,v])
+    hsv_new = cv2.merge([hnew, s, v])
 
     # convert back to bgr
     output = cv2.cvtColor(hsv_new, cv2.COLOR_HSV2BGR)
     return output
 
 # Change to canny edge detection
+
+
 def canny_edge(img):
     '''
         function that changes the image to canny edge detection randomly
@@ -134,9 +170,10 @@ def canny_edge(img):
     # convert to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # blur the image
-    blur = cv2.GaussianBlur(gray, (3,3), 0)
+    blur = cv2.GaussianBlur(gray, (3, 3), 0)
     # apply canny edge detection
-    canny = cv2.Canny(blur, 10, 160)                        # needs finetuning for fully edge detection
+    # needs finetuning for fully edge detection
+    canny = cv2.Canny(blur, 10, 160)
     # convert back to bgr
     canny = cv2.cvtColor(canny, cv2.COLOR_GRAY2BGR)
     # add canny image to the original image
@@ -144,38 +181,36 @@ def canny_edge(img):
     return output
 
 
-
-
-
 # import image
-img = cv2.imread('C:\\Users\\nadin\\Documents\\GitHub\\Embedded---Plastics-classifier\\blok2\\v1\\data\\test_img.jpg')
+
+img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
 cv2.imshow("original", img)
 # scale image
-# while(cv2.waitKey(500) != 27):
-img2 = scale_image_random(img)
+while (cv2.waitKey(500) != 27):
+    img2 = shear_img_random(img)
 # show image
-cv2.imshow("image", img2)
+    cv2.imshow("image", img2)
 
-path = 'C:/Users/nadin/Documents/GitHub/Embedded---Plastics-classifier/blok2/v1/augmented_dataset/rock'
+# path = 'C:/Users/nadin/Documents/GitHub/Embedded---Plastics-classifier/blok2/v1/augmented_dataset/rock'
 
-# path to the new folder where the images will be saved
-path_new = path + "_temp"
+# # path to the new folder where the images will be saved
+# path_new = path + "_temp"
 
-# if folder does not exist, create it
-if not os.path.exists(path_new):
-    os.makedirs(path_new)
+# # if folder does not exist, create it
+# if not os.path.exists(path_new):
+#     os.makedirs(path_new)
 
-# create a list with all the images
-images = glob.glob(path + "/*.jpg")
+# # create a list with all the images
+# images = glob.glob(path + "/*.jpg")
 
-# loop over all images
-for image in images:
-    # save the image
-    # cv.imwrite(path_new + "/" + os.path.basename(image), res)
+# # loop over all images
+# for image in images:
+#     # save the image
+#     # cv.imwrite(path_new + "/" + os.path.basename(image), res)
 
-    # save image with timestamp
-    cv2.imwrite(path_new + "/" + os.path.basename(image) +
-                str(time.time()) + ".jpg", img2)
+#     # save image with timestamp
+#     cv2.imwrite(path_new + "/" + os.path.basename(image) +
+#                 str(time.time()) + ".jpg", img2)
 
 # cv2.waitKey(0)
 cv2.destroyAllWindows()
