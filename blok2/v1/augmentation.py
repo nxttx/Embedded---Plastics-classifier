@@ -10,6 +10,33 @@ import time  # for timing
 # scale the images (this need to change to a function that keeps the same resolution as before)
 
 
+def stretch_img_random(img):
+    height, width = img.shape[:2]
+
+    stretchCoefficient = 0.4
+
+    stretchFactor = random.uniform(
+        1 - stretchCoefficient, 1 + stretchCoefficient)
+
+    horizontalStrech = bool(random.getrandbits(1))
+
+    if horizontalStrech:
+        v1 = [stretchFactor, 0, 0]
+        v2 = [0, 1, 0]
+    else:
+        v1 = [1, 0, 0]
+        v2 = [0, stretchFactor, 0]
+
+    M = np.matmul(np.float32(
+        [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), np.float32([v1, v2, [0, 0, 1]]))
+    M = np.matmul(M, np.float32(
+        [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))
+
+    output = cv2.warpAffine(img, M[:2], (width, height))
+
+    return output
+
+
 def shear_img_random(img):
     '''
         function that shears the image randomly
@@ -198,7 +225,7 @@ img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
 cv2.imshow("original", img)
 # scale image
 while (cv2.waitKey(500) != 27):
-    img2 = zoom_image_random(img)
+    img2 = stretch_img_random(img)
 # show image
     cv2.imshow("image", img2)
 
