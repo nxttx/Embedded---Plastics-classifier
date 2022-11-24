@@ -20,7 +20,7 @@ def main():
     rect_aoi.s32Y = ueye.int(0)
     rect_aoi.s32Width = ueye.int(width)
     rect_aoi.s32Height = ueye.int(height)
-    ueye.is_AOI(hcam, ueye.IS_AOI_IMAGE_SET_AOI, rect_aoi, ueye.sizeof(rect_aoi))
+    ueye.is_AOI(hcam, ueye.IS_SET_AUTO_WB_AOI, rect_aoi, ueye.sizeof(rect_aoi))
     print(f"AOI IS_AOI_IMAGE_SET_AOI returns {ret}")
 
     # allocate memory
