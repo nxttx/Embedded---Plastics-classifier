@@ -1,3 +1,4 @@
+import ctypes
 from pyueye import ueye
 import numpy as np
 import cv2
@@ -42,7 +43,7 @@ def main():
 
     # try white balance
     ret = ueye.is_SetAutoParameter(
-        hcam, ueye.IS_SET_ENABLE_AUTO_WHITEBALANCE, 1, 0)
+        hcam, ueye.IS_SET_ENABLE_AUTO_WHITEBALANCE, ctypes.c_double(1), ctypes.c_double(0))
     print(f"White balance {ret}")
     '''
     Traceback (most recent call last):
