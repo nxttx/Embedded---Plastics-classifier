@@ -42,8 +42,18 @@ def main():
 
     # try white balance
     ret = ueye.is_SetAutoParameter(
-        hcam, ueye.SET_ENABLE_AUTO_WHITEBALANCE, 1, 0)
+        hcam, ueye.IS_SET_ENABLE_AUTO_WHITEBALANCE, 1, 0)
     print(f"White balance {ret}")
+    '''
+    Traceback (most recent call last):
+  File "/home/evml5/repositories/Embedded---Plastics-classifier/blok2/conveyerAcquisition/scripts/ueyeTest.py", line 67, in <module>
+    main()
+  File "/home/evml5/repositories/Embedded---Plastics-classifier/blok2/conveyerAcquisition/scripts/ueyeTest.py", line 45, in main
+    hcam, ueye.IS_SET_ENABLE_AUTO_WHITEBALANCE, 1, 0)
+  File "/home/evml5/.local/lib/python3.6/site-packages/pyueye/ueye.py", line 8191, in is_SetAutoParameter
+    ret = _is_SetAutoParameter(_hCam, _param, ctypes.byref(pval1) if pval1 is not None else None, ctypes.byref(pval2) if pval2 is not None else None)
+TypeError: byref() argument must be a ctypes instance, not 'int'
+'''
 
     # get data from camera and display
     lineinc = width * int((bitspixel + 7) / 8)
