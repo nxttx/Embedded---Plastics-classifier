@@ -75,7 +75,7 @@ def main():
 
     delayTime = 1.0 / 5  # 5 FPS
 
-    lastTime = time.time_ns()
+    lastTime = time.time()
 
     while True:
         img = ueye.get_data(mem_ptr, width, height,
@@ -92,16 +92,16 @@ def main():
             if not os.path.exists(p):
                 os.makedirs(p)
             # construct the path to the output image
-            currentTime = time.time_ns()
+            currentTime = time.time()
             p = os.path.sep.join([p, "{}.png".format(int(currentTime))])
             frameTime = currentTime - lastTime
-            print("[INFO] saving frame: {}, with frame time of {}ns, {} FPS".format(
+            print("[INFO] saving frame: {}, with frame time of {}ms, {} FPS".format(
                 p, frameTime, 1e9/frameTime))
             cv2.imwrite(p, img)
 
             lastTime = currentTime
 
-            time.sleep(delayTime - frameTime / 1e9)
+            time.sleep(delayTime - frameTime / 1e6)
 
     cv2.destroyAllWindows()
 
