@@ -96,8 +96,6 @@ def flip_image_random(img):
     return output
 
 # rotate the images
-
-
 def rotate_image_random(img):
     '''
         function that rotates the image randomly
@@ -111,8 +109,6 @@ def rotate_image_random(img):
     return cv2.rotate(img, a)
 
 # translate the images
-
-
 def translate_image_random(img):
     '''
         function that translates the image randomly
@@ -132,8 +128,6 @@ def translate_image_random(img):
     return output
 
 # higher contrast
-
-
 def higher_contrast_random(img):
     '''
         function that highers the contrast of the image randomly
@@ -156,8 +150,6 @@ def higher_contrast_random(img):
     return output
 
 # change brightness
-
-
 def change_brightness_random(img):
     '''
         function that changes the brightness of the image randomly
@@ -174,8 +166,6 @@ def change_brightness_random(img):
     return output
 
 # rotate on hsv values
-
-
 def rotate_hsv_random(img):
     '''
         function that rotates the image randomly
@@ -220,7 +210,6 @@ def canny_edge(img):
 
 
 # import image
-
 img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
 cv2.imshow("original", img)
 # scale image
