@@ -187,8 +187,6 @@ def rotate_hsv_random(img):
     return output
 
 # Change to canny edge detection
-
-
 def canny_edge(img):
     '''
         function that changes the image to canny edge detection randomly
@@ -208,13 +206,29 @@ def canny_edge(img):
     output = cv2.addWeighted(img, 0.9, canny, 0.9, 0)
     return output
 
+# Put random noise over the image
+def add_noise_random(img):
+    '''
+        function that adds noise to the image randomly
+        input: image (Mat object)
+        output: image with added noise (Mat object)
+    '''
+    row,col,ch= img.shape
+    mean = 0
+    var = 0.1
+    sigma = var**0.5
+    gauss = np.random.normal(mean,sigma,(row,col,ch)) * 50
+    gauss = gauss.reshape(row,col,ch).astype(np.float32)
+    noisy = np.clip(cv2.add(img.astype(np.float32), gauss), 0, 255).astype(np.uint8)
+    return noisy
+    
 
 # import image
 img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
 cv2.imshow("original", img)
-# scale image
+# noise added to image
 while (cv2.waitKey(500) != 27):
-    img2 = stretch_img_random(img)
+    img2 = add_noise_random(img)
 # show image
     cv2.imshow("image", img2)
 
@@ -239,5 +253,5 @@ while (cv2.waitKey(500) != 27):
 #     cv2.imwrite(path_new + "/" + os.path.basename(image) +
 #                 str(time.time()) + ".jpg", img2)
 
-# cv2.waitKey(0)
+cv2.waitKey(0)
 cv2.destroyAllWindows()
