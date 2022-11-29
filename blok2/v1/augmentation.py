@@ -199,7 +199,7 @@ def canny_edge(img):
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
     # apply canny edge detection
     # needs finetuning for fully edge detection
-    canny = cv2.Canny(blur, 10, 160)
+    canny = cv2.Canny(blur, 0, 175)
     # convert back to bgr
     canny = cv2.cvtColor(canny, cv2.COLOR_GRAY2BGR)
     # add canny image to the original image
@@ -228,30 +228,11 @@ img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
 cv2.imshow("original", img)
 # noise added to image
 while (cv2.waitKey(500) != 27):
-    img2 = add_noise_random(img)
+    img2 = canny_edge(img)
 # show image
     cv2.imshow("image", img2)
 
-# path = 'C:/Users/nadin/Documents/GitHub/Embedded---Plastics-classifier/blok2/v1/augmented_dataset/rock'
-
-# # path to the new folder where the images will be saved
-# path_new = path + "_temp"
-
-# # if folder does not exist, create it
-# if not os.path.exists(path_new):
-#     os.makedirs(path_new)
-
-# # create a list with all the images
-# images = glob.glob(path + "/*.jpg")
-
-# # loop over all images
-# for image in images:
-#     # save the image
-#     # cv.imwrite(path_new + "/" + os.path.basename(image), res)
-
-#     # save image with timestamp
-#     cv2.imwrite(path_new + "/" + os.path.basename(image) +
-#                 str(time.time()) + ".jpg", img2)
+cv2.imwrite(os.path.join("blok2", "v1", "data", "test_img_noise.jpg"), img2)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
