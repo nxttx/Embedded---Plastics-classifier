@@ -8,12 +8,13 @@
   The class labels are:
     # 0: Ignore
     1: Bag
-    2: Bottlecap
-    3: Fork
-    4: Knife  
-    5: Pen
-    6: Spoon 
-    7: Styrofoam
+    2: Bottle
+    3: Bottlecap
+    4: Fork
+    5: Knife  
+    6: Pen
+    7: Spoon 
+    8: Styrofoam
 '''
 # imports
 import os
@@ -84,6 +85,7 @@ def get_bounding_box(src):
 
     # find the biggest contour
     max_area = 0
+    max_cnt = None
     for i in range(len(contours)):
         cnt = contours[i]
         area = cv2.contourArea(cnt)
@@ -107,6 +109,7 @@ if __name__ == "__main__":
     # dataset image directories
     root_dir = os.path.join("blok2", "conveyerAcquisition", "datasets")
     bag_dir = os.path.join(root_dir, "bag")
+    bottle_dir = os.path.join(root_dir, "bottle")
     bottlecap_dir = os.path.join(root_dir, "bottlecap")
     fork_dir = os.path.join(root_dir, "fork")
     knife_dir = os.path.join(root_dir, "knife")
@@ -117,6 +120,7 @@ if __name__ == "__main__":
 
     # get all images in the dataset
     bag_images = os.listdir(bag_dir)
+    bottle_images = os.listdir(bottle_dir)
     bottlecap_images = os.listdir(bottlecap_dir)
     fork_images = os.listdir(fork_dir)
     knife_images = os.listdir(knife_dir)
@@ -125,8 +129,8 @@ if __name__ == "__main__":
     styrofoam_images = os.listdir(styrofoam_dir)
 
     # loop over every image and generate label file
-    for image in knife_images:
-        img = cv2.imread(os.path.join(knife_dir, image))
+    for image in bottle_images:
+        img = cv2.imread(os.path.join(bottle_dir, image))
         cv2.imshow("org", img)
         WB = remove_background(img)
         cv2.imshow("WB", WB)
