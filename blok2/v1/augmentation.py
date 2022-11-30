@@ -223,16 +223,61 @@ def add_noise_random(img):
     return noisy
     
 
-# import image
-img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
-cv2.imshow("original", img)
-# noise added to image
-while (cv2.waitKey(500) != 27):
-    img2 = canny_edge(img)
-# show image
-    cv2.imshow("image", img2)
+# # import image
+# img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
+# cv2.imshow("original", img)
+# # noise added to image
+# while (cv2.waitKey(500) != 27):
+#     img2 = canny_edge(img)
+# # show image
+#     cv2.imshow("image", img2)
 
-cv2.imwrite(os.path.join("blok2", "v1", "data", "test_img_noise.jpg"), img2)
+# cv2.imwrite(os.path.join("blok2", "v1", "data", "test_img_noise.jpg"), img2)
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+
+
+root_dir = os.path.join("blok2", "conveyerAcquisition", "datasets")
+bag_dir = os.path.join(root_dir, "bag")
+bottle_dir = os.path.join(root_dir, "bottle")
+bottlecap_dir = os.path.join(root_dir, "bottlecap")
+fork_dir = os.path.join(root_dir, "fork")
+knife_dir = os.path.join(root_dir, "knife")
+pen_dir = os.path.join(root_dir, "pen")
+spoon_dir = os.path.join(root_dir, "spoon")
+styrofoam_dir = os.path.join(root_dir, "styrofoam")
+
+
+def augment_images(directory):
+    '''
+        function that augments the images in the directory
+        input:  directory (string)
+        output: augmented images (list of images)
+    '''
+    # get all images in the directory
+    images = os.listdir(directory)
+    # create empty list
+    augmented_images = []
+    # loop over all images in the directory
+    for image in images:
+        # if image includes '_ignore' or .txt skip it
+        if '_ignore' in image or '.txt' in image:
+            continue
+        # read image
+        img = cv2.imread(os.path.join(directory, image))
+        # add noise
+        img_noise = add_noise_random(img)
+        # rotate on hsv values
+        img_hsv = rotate_hsv_random(img_noise)
+        # change brightness
+        img_brightness = change_brightness_random(img_hsv)
+        # higher contrast
+        img_contrast = higher_contrast_random(img_brightness)
+        # canny edge detection
+        img_canny = canny_edge(img_contrast)
+        # append images to list
+        augmented_images.append(img_canny)
+        # save image
+        # 
+        cv2.imwrite(os.path.join(directory,  "_augmented.png"), img_canny)
