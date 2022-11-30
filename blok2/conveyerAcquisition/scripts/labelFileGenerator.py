@@ -34,50 +34,24 @@ def remove_background(src):
 
     src = src.copy()
 
+    # # find first whiteish line
+    # for i in range(src.shape[0]):	
+    #     if np.sum(src[i, :, :]) > 255 * 3 * 100:
+    #         break
 
+    # # remove line and everything above it
+    # src[:i+30, :, :] = 0
 
+    # # find last whiteish line
+    # for i in range(src.shape[0] - 1, 0, -1):
+    #     if np.sum(src[i, :, :]) > 255 * 3 * 100:
+    #         break 
 
-    # # remove background from the image
-    # src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
-
-    # dst = src.copy()
-    # kernel = np.ones((3,3), np.uint8)
-    # dst = cv2.erode(dst, kernel, iterations=1)
-    # dst = cv2.dilate(dst, kernel, iterations=1)
-
-    # # subtract dst from src
-    # src = cv2.subtract(src, dst)
-
-    # # src = cv2.absdiff(src, background)
-
-    # # # normalize histogram
-    # src = cv2.equalizeHist(src)
-
-    # # threshold the image
-    # # ret, src = cv2.threshold(src,5 , 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-    # return src
-    #######################################################    
-    
-
-    # find first whiteish line
-    for i in range(src.shape[0]):	
-        if np.sum(src[i, :, :]) > 255 * 3 * 100:
-            break
-
-    # remove line and everything above it
-    src[:i+30, :, :] = 0
-
-    # find last whiteish line
-    for i in range(src.shape[0] - 1, 0, -1):
-        if np.sum(src[i, :, :]) > 255 * 3 * 100:
-            break 
-
-    # remove line and everything below
-    src[i-30:, :, :] = 0
+    # # remove line and everything below
+    # src[i-30:, :, :] = 0
 
     # small gaussian blur
-    # src = cv2.GaussianBlur(src, (3,3), 0)
+    src = cv2.GaussianBlur(src, (3,3), 0)
 
     # simplefy image to 8bit colors
     src = cv2.convertScaleAbs(src, alpha=0.03)
@@ -109,46 +83,6 @@ def get_bounding_box(org):
     Returns:
         Output: {int[]} - The bounding box coordinates.   
     '''
-
-    # #  erode src 
-    # kernel = np.ones((3,3), np.uint8)
-    # src = cv2.dilate(src, kernel, iterations=1)
-    # src = cv2.dilate(src, kernel, iterations=1)
-
-    # cv2.imshow('src', src)
-
-
-
-
-    # # connect all the white pixels together
-    # kernel = np.ones((3,3), np.uint8)
-    # src = cv2.dilate(src, kernel, iterations=5)
-    # src = cv2.erode(src, kernel, iterations=5)
-
-
-    # #  equalize black and white image histogram
-    # src = cv2.equalizeHist(src)
-
-    # cv2.imshow('src', src)
-
-
-    # # find contours
-    # contours, hierarchy = cv2.findContours(src, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-    # # find the biggest contour
-    # max_area = 0
-    # max_contour = None
-    # for contour in contours:
-    #     area = cv2.contourArea(contour)
-    #     if area > max_area:
-    #         max_area = area
-    #         max_contour = contour
-
-    # # get bounding box
-    # x, y, w, h = cv2.boundingRect(max_contour)
-
-    # # return bounding box
-    # return [x, y, w, h]
 
     src = org.copy()
     src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
@@ -203,7 +137,7 @@ def get_bounding_box(org):
     # return the bounding box
     return [x, y, w, h]
 
-def generateLabelFile(images, dir):
+def generateLabelFile(images, dir, label):
     '''
     Generate the labelfile with the images in the given directory.
 
@@ -219,9 +153,10 @@ def generateLabelFile(images, dir):
         os.system('cls' if os.name == 'nt' else 'clear')
         cv2.destroyAllWindows()
 
-        # if image includes '_ignore' skip it
-        if '_ignore' in image:
+        # if image includes '_ignore' or .txt skip it
+        if '_ignore' in image or '.txt' in image:
             continue
+
 
         img = cv2.imread(os.path.join(dir, image))
         cv2.imshow("org", img)
@@ -234,8 +169,8 @@ def generateLabelFile(images, dir):
             break
 
         # now write label file
-        with open(os.path.join(bag_dir, image.replace('.jpg', '.txt')), 'w') as f:
-            f.write('1 {} {} {} {}'.format(x+w/2, y+h/2, w, h))
+        with open(os.path.join(bag_dir, image.replace('.png', '.txt')), 'w') as f:
+            f.write('{} {} {} {} {}'.format(label, x+w/2, y+h/2, w, h))
 
 
 
@@ -264,13 +199,14 @@ if __name__ == "__main__":
     styrofoam_images = os.listdir(styrofoam_dir)
 
     # generate label files
-    generateLabelFile(bag_images, bag_dir)
-    generateLabelFile(bottle_images, bottle_dir)
-    generateLabelFile(bottlecap_images, bottlecap_dir)
-    generateLabelFile(fork_images, fork_dir)
-    generateLabelFile(knife_images, knife_dir)
-    generateLabelFile(pen_images, pen_dir)
-    generateLabelFile(spoon_images, spoon_dir)
-    generateLabelFile(styrofoam_images, styrofoam_dir)
+    generateLabelFile(bag_images, bag_dir, 1)
+    generateLabelFile(bottle_images, bottle_dir, 2)
+    generateLabelFile(bottlecap_images, bottlecap_dir, 3)
+    generateLabelFile(fork_images, fork_dir, 4)
+    generateLabelFile(knife_images, knife_dir, 5)
+    generateLabelFile(pen_images, pen_dir, 6)
+    generateLabelFile(spoon_images, spoon_dir, 7)
+    generateLabelFile(styrofoam_images, styrofoam_dir, 8)
+
     
     
