@@ -100,7 +100,7 @@ def remove_background(src):
 
 
 
-def get_bounding_box(src):
+def get_bounding_box(org):
     '''
     Get the bounding box of the object in the image.
 
@@ -150,7 +150,7 @@ def get_bounding_box(src):
     # # return bounding box
     # return [x, y, w, h]
 
-    src = src.copy()
+    src = org.copy()
     src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
 
 
@@ -176,8 +176,67 @@ def get_bounding_box(src):
     w += 50
     h += 50
 
+
+    # draw the bounding box on org without changing org
+    org2 = org.copy()
+    cv2.rectangle(org2, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    cv2.imshow('CALCULATED BOUNDING BOX', org2)
+
+    # ask user to confirm the bounding box 
+    while True:
+        print('Is the bounding box correct? (y/n/q)')
+        key = cv2.waitKey(0)
+        if key == ord('y'):
+            break
+        elif key == ord('q'):
+            exit()
+        elif key == ord('n'):
+            # get new bounding box
+            x, y, w, h = cv2.selectROI(org)
+            cv2.rectangle(org, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            cv2.imshow('COMFIRM', org)
+            break
+
+
+
+    cv2.destroyAllWindows()
     # return the bounding box
     return [x, y, w, h]
+
+def generateLabelFile(images, dir):
+    '''
+    Generate the labelfile with the images in the given directory.
+
+    Arguments:
+        {string[]} images: The images.
+        {string} dir: The directory.
+    Returns:
+        Output: void
+    '''
+
+    for image in images:
+        # clear previous frames and console
+        os.system('cls' if os.name == 'nt' else 'clear')
+        cv2.destroyAllWindows()
+
+        # if image includes '_ignore' skip it
+        if '_ignore' in image:
+            continue
+
+        img = cv2.imread(os.path.join(dir, image))
+        cv2.imshow("org", img)
+        WB = remove_background(img)
+        x, y, w, h = get_bounding_box(WB)
+
+
+        x = cv2.waitKey(0)
+        if x == ord("q"):
+            break
+
+        # now write label file
+        with open(os.path.join(bag_dir, image.replace('.jpg', '.txt')), 'w') as f:
+            f.write('1 {} {} {} {}'.format(x+w/2, y+h/2, w, h))
+
 
 
 
@@ -204,25 +263,14 @@ if __name__ == "__main__":
     spoon_images = os.listdir(spoon_dir)
     styrofoam_images = os.listdir(styrofoam_dir)
 
-    # loop over every image and generate label file
-    for image in knife_images:
-        img = cv2.imread(os.path.join(knife_dir, image))
-        cv2.imshow("org", img)
-        WB = remove_background(img)
-        cv2.imshow("WB", WB)
-        x, y, w, h = get_bounding_box(WB)
-
-        # draw bounding box on image
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        cv2.rectangle(WB, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        cv2.imshow("WBBB", WB)
-
-        cv2.imshow("BB", img)
-        x = cv2.waitKey(0)
-        if x == ord("q"):
-            break
-
-        # # now write label file
-        # with open(os.path.join(bag_dir, image.replace('.jpg', '.txt')), 'w') as f:
-        #     f.write('1 {} {} {} {}'.format(x+w/2, y+h/2, w, h))
-
+    # generate label files
+    generateLabelFile(bag_images, bag_dir)
+    generateLabelFile(bottle_images, bottle_dir)
+    generateLabelFile(bottlecap_images, bottlecap_dir)
+    generateLabelFile(fork_images, fork_dir)
+    generateLabelFile(knife_images, knife_dir)
+    generateLabelFile(pen_images, pen_dir)
+    generateLabelFile(spoon_images, spoon_dir)
+    generateLabelFile(styrofoam_images, styrofoam_dir)
+    
+    
