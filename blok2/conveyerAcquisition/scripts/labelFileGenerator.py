@@ -32,6 +32,34 @@ def remove_background(src):
         {Mat} The image with the background removed.
     '''
 
+    src = src.copy()
+
+
+
+
+    # # remove background from the image
+    # src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+
+    # dst = src.copy()
+    # kernel = np.ones((3,3), np.uint8)
+    # dst = cv2.erode(dst, kernel, iterations=1)
+    # dst = cv2.dilate(dst, kernel, iterations=1)
+
+    # # subtract dst from src
+    # src = cv2.subtract(src, dst)
+
+    # # src = cv2.absdiff(src, background)
+
+    # # # normalize histogram
+    # src = cv2.equalizeHist(src)
+
+    # # threshold the image
+    # # ret, src = cv2.threshold(src,5 , 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    # return src
+    #######################################################    
+    
+
     # find first whiteish line
     for i in range(src.shape[0]):	
         if np.sum(src[i, :, :]) > 255 * 3 * 100:
@@ -49,7 +77,7 @@ def remove_background(src):
     src[i-30:, :, :] = 0
 
     # small gaussian blur
-    src = cv2.GaussianBlur(src, (3,3), 0)
+    # src = cv2.GaussianBlur(src, (3,3), 0)
 
     # simplefy image to 8bit colors
     src = cv2.convertScaleAbs(src, alpha=0.03)
@@ -63,6 +91,10 @@ def remove_background(src):
     src[:, :, 0] = cv2.equalizeHist(src[:, :, 0])
     src = cv2.cvtColor(src, cv2.COLOR_YUV2BGR)
 
+
+    # add gaussian blur
+    src = cv2.GaussianBlur(src, (3,3), 0)
+    
 
     return src
 
@@ -78,7 +110,50 @@ def get_bounding_box(src):
         Output: {int[]} - The bounding box coordinates.   
     '''
 
+    # #  erode src 
+    # kernel = np.ones((3,3), np.uint8)
+    # src = cv2.dilate(src, kernel, iterations=1)
+    # src = cv2.dilate(src, kernel, iterations=1)
+
+    # cv2.imshow('src', src)
+
+
+
+
+    # # connect all the white pixels together
+    # kernel = np.ones((3,3), np.uint8)
+    # src = cv2.dilate(src, kernel, iterations=5)
+    # src = cv2.erode(src, kernel, iterations=5)
+
+
+    # #  equalize black and white image histogram
+    # src = cv2.equalizeHist(src)
+
+    # cv2.imshow('src', src)
+
+
+    # # find contours
+    # contours, hierarchy = cv2.findContours(src, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # # find the biggest contour
+    # max_area = 0
+    # max_contour = None
+    # for contour in contours:
+    #     area = cv2.contourArea(contour)
+    #     if area > max_area:
+    #         max_area = area
+    #         max_contour = contour
+
+    # # get bounding box
+    # x, y, w, h = cv2.boundingRect(max_contour)
+
+    # # return bounding box
+    # return [x, y, w, h]
+
+    src = src.copy()
     src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+
+
 
     # find the contours in the image
     contours, hierarchy = cv2.findContours(src, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -95,10 +170,11 @@ def get_bounding_box(src):
 
     # get the bounding box of the biggest contour + some padding
     x, y, w, h = cv2.boundingRect(max_cnt)
-    x -= 10
-    y -= 10
-    w += 20
-    h += 20
+    # add 50px padding
+    x -= 50
+    y -= 50
+    w += 50
+    h += 50
 
     # return the bounding box
     return [x, y, w, h]
@@ -123,14 +199,14 @@ if __name__ == "__main__":
     bottle_images = os.listdir(bottle_dir)
     bottlecap_images = os.listdir(bottlecap_dir)
     fork_images = os.listdir(fork_dir)
-    knife_images = os.listdir(knife_dir)
+    knife_images = os.listdir(knife_dir)    
     pen_images = os.listdir(pen_dir)
     spoon_images = os.listdir(spoon_dir)
     styrofoam_images = os.listdir(styrofoam_dir)
 
     # loop over every image and generate label file
-    for image in bottle_images:
-        img = cv2.imread(os.path.join(bottle_dir, image))
+    for image in knife_images:
+        img = cv2.imread(os.path.join(knife_dir, image))
         cv2.imshow("org", img)
         WB = remove_background(img)
         cv2.imshow("WB", WB)
