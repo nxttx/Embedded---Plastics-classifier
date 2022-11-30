@@ -1,2 +1,2 @@
-# ignore all .txt files (label files)
-*.txt
+# # ignore all .txt files (label files)
+# *.txt

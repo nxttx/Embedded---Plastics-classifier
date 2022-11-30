@@ -137,7 +137,7 @@ def get_bounding_box(org):
     # return the bounding box
     return [x, y, w, h]
 
-def generateLabelFile(images, dir, label):
+def generateLabelFile(dir, label):
     '''
     Generate the labelfile with the images in the given directory.
 
@@ -147,6 +147,7 @@ def generateLabelFile(images, dir, label):
     Returns:
         Output: void
     '''
+    images = os.listdir(dir)
 
     for image in images:
         # clear previous frames and console
@@ -169,7 +170,7 @@ def generateLabelFile(images, dir, label):
             break
 
         # now write label file
-        with open(os.path.join(bag_dir, image.replace('.png', '.txt')), 'w') as f:
+        with open(os.path.join(dir, image.replace('.png', '.txt')), 'w') as f:
             f.write('{} {} {} {} {}'.format(label, x+w/2, y+h/2, w, h))
 
 
@@ -188,25 +189,15 @@ if __name__ == "__main__":
     styrofoam_dir = os.path.join(root_dir, "styrofoam")
 
 
-    # get all images in the dataset
-    bag_images = os.listdir(bag_dir)
-    bottle_images = os.listdir(bottle_dir)
-    bottlecap_images = os.listdir(bottlecap_dir)
-    fork_images = os.listdir(fork_dir)
-    knife_images = os.listdir(knife_dir)    
-    pen_images = os.listdir(pen_dir)
-    spoon_images = os.listdir(spoon_dir)
-    styrofoam_images = os.listdir(styrofoam_dir)
-
     # generate label files
-    generateLabelFile(bag_images, bag_dir, 1)
-    generateLabelFile(bottle_images, bottle_dir, 2)
-    generateLabelFile(bottlecap_images, bottlecap_dir, 3)
-    generateLabelFile(fork_images, fork_dir, 4)
-    generateLabelFile(knife_images, knife_dir, 5)
-    generateLabelFile(pen_images, pen_dir, 6)
-    generateLabelFile(spoon_images, spoon_dir, 7)
-    generateLabelFile(styrofoam_images, styrofoam_dir, 8)
+    # generateLabelFile(bag_dir, 1)
+    # generateLabelFile(bottle_dir, 2)
+    # generateLabelFile(bottlecap_dir, 3)
+    # generateLabelFile(fork_dir, 4)
+    generateLabelFile(knife_dir, 5)
+    generateLabelFile(pen_dir, 6)
+    generateLabelFile(spoon_dir, 7)
+    generateLabelFile(styrofoam_dir, 8)
 
     
     
