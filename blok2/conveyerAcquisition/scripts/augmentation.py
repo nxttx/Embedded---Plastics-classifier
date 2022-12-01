@@ -530,21 +530,3 @@ if __name__ == '__main__':
     styrofoam_dir = os.path.join(root_dir, "styrofoam")
 
     augment_images(bag_dir)
-
-
-
-
-    # # import image
-    # img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
-    # cv2.imshow("original", img)
-    # # noise added to image
-    # while (cv2.waitKey(500) != 27):
-    #     img2 = canny_edge(img)
-    # # show image
-    #     cv2.imshow("image", img2)
-
-    # cv2.imwrite(os.path.join("blok2", "v1", "data", "test_img_noise.jpg"), img2)
-
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
