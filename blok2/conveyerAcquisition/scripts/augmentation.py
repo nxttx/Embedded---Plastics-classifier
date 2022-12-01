@@ -7,6 +7,7 @@ import glob
 import random
 import matplotlib.pyplot as plt
 import time  # for timing
+import math
 
 # scale the images (this need to change to a function that keeps the same resolution as before)
 
@@ -172,16 +173,22 @@ def rotate_image_random(img, boundingBox=None):
         input: image (Mat object)
         output: rotated image (Mat object)
     '''
-    a = random.randint(0, 3)
-    output = cv2.rotate(img, a)
+    height, width = img.shape[:2]
 
-    if a == 3:
-        output = img
+    rotateAngle = random.randint(0, 3) * math.pi / 2
+
+    v1 = [math.cos(rotateAngle), math.sin(rotateAngle), 0]
+    v2 = [-math.sin(rotateAngle), math.cos(rotateAngle), 0]
+
+    M = np.matmul(np.float32(
+        [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), np.float32([v1, v2, [0, 0, 1]]))
+    M = np.matmul(M, np.float32(
+        [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))
+
+    output = cv2.warpAffine(img, M[:2], (width, height))
 
     if boundingBox != None:
-        # flip the bounding box
-        # TODO
-        return output, boundingBox
+        return output, get_new_boundingBox(boundingBox, M, width, height)
 
     return output
 
@@ -377,7 +384,7 @@ def augment_images(directory):
             [img, label] = shear_img_random(img, label)
             [img, label] = zoom_image_random(img, label)
             # [img, label] = flip_image_random(img, label)  #Robert
-            # [img, label] = rotate_image_random(img, label) #Robert
+            [img, label] = rotate_image_random(img, label)  # Robert
             [img, label] = translate_image_random(img, label)  # Robert
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
