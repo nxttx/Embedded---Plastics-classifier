@@ -11,6 +11,55 @@ import time  # for timing
 # scale the images (this need to change to a function that keeps the same resolution as before)
 
 
+def get_new_boundingBox(boundingBox, M):
+    # convert to corner cordinates
+    boundingBoxTL = [boundingBox[0] - boundingBox[2] /
+                     2, boundingBox[1] - boundingBox[3] / 2, 1]
+    boundingBoxTR = [boundingBox[0] + boundingBox[2] /
+                     2, boundingBox[1] - boundingBox[3] / 2, 1]
+    boundingBoxBL = [boundingBox[0] - boundingBox[2] /
+                     2, boundingBox[1] + boundingBox[3] / 2, 1]
+    boundingBoxBR = [boundingBox[0] + boundingBox[2] /
+                     2, boundingBox[1] + boundingBox[3] / 2, 1]
+
+    # calculate new positions
+    newBoundingBoxTL = M.dot(boundingBoxTL)
+    newBoundingBoxTR = M.dot(boundingBoxTR)
+    newBoundingBoxBL = M.dot(boundingBoxBL)
+    newBoundingBoxBR = M.dot(boundingBoxBR)
+
+    # make list for more readable code
+    xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
+               newBoundingBoxBL[0], newBoundingBoxBR[0], ]
+
+    yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
+               newBoundingBoxBL[1], newBoundingBoxBR[1], ]
+
+    # calculate minimum and maximum values for new bounding box
+    # NOTE this method of creating a new bounding box only works with resizing and translating
+    # rotations and sheering can result in bounding boxes that are to big
+    # fixing this would recuire having a label for every pixel, whether this is the object or background
+    top = 1
+    bottom = 0
+    left = 1
+    right = 0
+
+    for x in xValues:
+        if x < left:
+            left = x
+        if x > right:
+            right = x
+
+    for y in yValues:
+        if y < top:
+            top = y
+        if y > bottom:
+            bottom = y
+
+    # reconstruct new bounding box
+    return [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+
+
 def stretch_img_random(img, boundingBox=None):
     height, width = img.shape[:2]
 
@@ -36,54 +85,7 @@ def stretch_img_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M[:2], (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M)
 
     return output
 
@@ -109,54 +111,7 @@ def shear_img_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M[:2], (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M)
 
     return output
 
@@ -184,59 +139,12 @@ def zoom_image_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M[:2], (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M)
 
     return output
 
 
-# flip the images horizontally 
+# flip the images horizontally
 # TODO BOUDING BOXES
 def flip_image_random(img, boundingBox=None):
     '''
@@ -244,17 +152,45 @@ def flip_image_random(img, boundingBox=None):
         input: image (Mat object)
         output: flipped image (Mat object)
     '''
-    output = cv2.flip(img, random.randint(-2, 1))
+
+    flipCode = random.randint(-2, 1)
+    output = cv2.flip(img, flipCode)
 
     if boundingBox != None:
-        # flip the bounding box
-        # TODO
-        return output, boundingBox
+
+        # 1 = horizontal
+        # 0 = vertical
+        # -1 = both
+
+        height, width = img.shape[:2]
+
+        flipmatrix = np.float32([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+
+        if flipCode == 1:
+            flipmatrix[0, 0] = -1
+            flipmatrix[0, 2] = img.shape[1]
+        elif flipCode == 0:
+            flipmatrix[1, 1] = -1
+            flipmatrix[1, 2] = img.shape[0]
+        elif flipCode == -1:
+            flipmatrix[0, 0] = -1
+            flipmatrix[0, 2] = img.shape[1]
+            flipmatrix[1, 1] = -1
+            flipmatrix[1, 2] = img.shape[0]
+
+        flipmatrix = np.matmul(np.float32(
+            [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), flipmatrix)
+        flipmatrix = np.matmul(flipmatrix, np.float32(
+            [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))
+
+        return output, get_new_boundingBox(boundingBox, flipmatrix)
 
     return output
 
 # rotate the images
 # TODO BOUDING BOXES
+
+
 def rotate_image_random(img, boundingBox=None):
     '''
         function that rotates the image randomly
@@ -268,14 +204,15 @@ def rotate_image_random(img, boundingBox=None):
         output = img
 
     if boundingBox != None:
-        # flip the bounding box
-        # TODO
-        return output, boundingBox
-    
+        rotationMatrix = cv2.getRotationMatrix2D(boundingBox[:2], a * 90, 1)
+
+        return output, get_new_boundingBox(boundingBox, rotationMatrix)
 
     return output
 
 # translate the images
+
+
 def translate_image_random(img, boundingBox=None):
     '''
         function that translates the image randomly
@@ -294,58 +231,13 @@ def translate_image_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M, (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M)
 
     return output
 
 # higher contrast
+
+
 def higher_contrast_random(img):
     '''
         function that highers the contrast of the image randomly
@@ -368,6 +260,8 @@ def higher_contrast_random(img):
     return output
 
 # change brightness
+
+
 def change_brightness_random(img):
     '''
         function that changes the brightness of the image randomly
@@ -384,6 +278,8 @@ def change_brightness_random(img):
     return output
 
 # rotate on hsv values
+
+
 def rotate_hsv_random(img):
     '''
         function that rotates the image randomly
@@ -405,6 +301,8 @@ def rotate_hsv_random(img):
     return output
 
 # Change to canny edge detection
+
+
 def canny_edge(img):
     '''
         function that changes the image to canny edge detection randomly
@@ -425,6 +323,8 @@ def canny_edge(img):
     return output
 
 # Put random noise over the image
+
+
 def add_noise_random(img):
     '''
         function that adds noise to the image randomly
@@ -466,25 +366,25 @@ def augment_images(directory):
             if '_ignore' in image or '.txt' in image:
                 continue
             # read the image
-            img = cv2.imread( os.path.join(directory, image))
+            img = cv2.imread(os.path.join(directory, image))
             # read the label file
-            labelOrg = open( os.path.join(directory, image[:-4] + '.txt'), 'r')
+            labelOrg = open(os.path.join(directory, image[:-4] + '.txt'), 'r')
             # read the label
             labelOrg = labelOrg.read()
             # split the label
             labelOrg = labelOrg.split(' ')
             # convert item 1234 to float but keep the first item a string
             labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
-            
 
             # create a list of all the functions
             functions = [stretch_img_random, shear_img_random, zoom_image_random,
-                            flip_image_random, rotate_image_random, translate_image_random, 
-                            higher_contrast_random, change_brightness_random, rotate_hsv_random,
-                            canny_edge, add_noise_random]
-            
-            # execute the functions 
-            [img, label] = stretch_img_random(img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
+                         flip_image_random, rotate_image_random, translate_image_random,
+                         higher_contrast_random, change_brightness_random, rotate_hsv_random,
+                         canny_edge, add_noise_random]
+
+            # execute the functions
+            [img, label] = stretch_img_random(
+                img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
             [img, label] = shear_img_random(img, label)
             [img, label] = zoom_image_random(img, label)
             [img, label] = flip_image_random(img, label)
@@ -497,13 +397,14 @@ def augment_images(directory):
             img = add_noise_random(img)
 
             # save the image
-            currentEpochTime = 	int(round(time.time() * 1000))
-            safeDir =  os.path.join(directory, image[:-4] + '_aug_' + str(currentEpochTime))
+            currentEpochTime = int(round(time.time() * 1000))
+            safeDir = os.path.join(
+                directory, image[:-4] + '_aug_' + str(currentEpochTime))
             cv2.imwrite(safeDir + '.png', img)
             # save the label
             labelFile = open(safeDir + '.txt', 'w')
-            labelFile.write(str(labelOrg[0]) + ' ' + str(label[0]) + ' ' + 
-                            str(label[1]) + ' ' + str(label[2]) + ' ' + 
+            labelFile.write(str(labelOrg[0]) + ' ' + str(label[0]) + ' ' +
+                            str(label[1]) + ' ' + str(label[2]) + ' ' +
                             str(label[3]))
             labelFile.close()
 
@@ -512,9 +413,6 @@ def augment_images(directory):
             if amount >= target:
                 # break forloop and while loop
                 break
-
-
-        
 
 
 if __name__ == '__main__':
@@ -529,4 +427,4 @@ if __name__ == '__main__':
     spoon_dir = os.path.join(root_dir, "spoon")
     styrofoam_dir = os.path.join(root_dir, "styrofoam")
 
-    augment_images(bag_dir)
+    # augment_images(bag_dir)
