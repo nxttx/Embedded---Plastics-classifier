@@ -236,7 +236,7 @@ def zoom_image_random(img, boundingBox=None):
     return output
 
 
-# flip the images horizontally 
+# flip the images horizontally
 # TODO BOUDING BOXES
 def flip_image_random(img, boundingBox=None):
     '''
@@ -255,6 +255,8 @@ def flip_image_random(img, boundingBox=None):
 
 # rotate the images
 # TODO BOUDING BOXES
+
+
 def rotate_image_random(img, boundingBox=None):
     '''
         function that rotates the image randomly
@@ -271,11 +273,12 @@ def rotate_image_random(img, boundingBox=None):
         # flip the bounding box
         # TODO
         return output, boundingBox
-    
 
     return output
 
 # translate the images
+
+
 def translate_image_random(img, boundingBox=None):
     '''
         function that translates the image randomly
@@ -346,6 +349,8 @@ def translate_image_random(img, boundingBox=None):
     return output
 
 # higher contrast
+
+
 def higher_contrast_random(img):
     '''
         function that highers the contrast of the image randomly
@@ -368,6 +373,8 @@ def higher_contrast_random(img):
     return output
 
 # change brightness
+
+
 def change_brightness_random(img):
     '''
         function that changes the brightness of the image randomly
@@ -384,6 +391,8 @@ def change_brightness_random(img):
     return output
 
 # rotate on hsv values
+
+
 def rotate_hsv_random(img):
     '''
         function that rotates the image randomly
@@ -405,6 +414,8 @@ def rotate_hsv_random(img):
     return output
 
 # Change to canny edge detection
+
+
 def canny_edge(img):
     '''
         function that changes the image to canny edge detection randomly
@@ -425,6 +436,8 @@ def canny_edge(img):
     return output
 
 # Put random noise over the image
+
+
 def add_noise_random(img):
     '''
         function that adds noise to the image randomly
@@ -466,9 +479,9 @@ def augment_images(directory):
             if '_ignore' in image or '.txt' in image:
                 continue
             # read the image
-            img = cv2.imread( os.path.join(directory, image))
+            img = cv2.imread(os.path.join(directory, image))
             # read the label file
-            labelOrg = open( os.path.join(directory, image[:-4] + '.txt'), 'r')
+            labelOrg = open(os.path.join(directory, image[:-4] + '.txt'), 'r')
             # read the label
             labelOrg = labelOrg.read()
             # split the label
@@ -482,29 +495,28 @@ def augment_images(directory):
             left = int((labelOrg[1] - labelOrg[3]/2) * img.shape[1])
             right = int((labelOrg[1] + labelOrg[3]/2) * img.shape[1])
 
-            cv2.rectangle(img, (left, top), (right, bottom), (255,0, 0), 20)
-
+            cv2.rectangle(img, (left, top), (right, bottom), (255, 0, 0), 20)
 
             # de normalize the label
-            labelOrg[1] = labelOrg[1] * img.shape[0]
-            labelOrg[2] = labelOrg[2] * img.shape[1]
-            labelOrg[3] = labelOrg[3] * img.shape[0]
-            labelOrg[4] = labelOrg[4] * img.shape[1]
-            
+            labelOrg[1] = labelOrg[1] * img.shape[1]
+            labelOrg[2] = labelOrg[2] * img.shape[0]
+            labelOrg[3] = labelOrg[3] * img.shape[1]
+            labelOrg[4] = labelOrg[4] * img.shape[0]
 
             # create a list of all the functions
             functions = [stretch_img_random, shear_img_random, zoom_image_random,
-                            flip_image_random, rotate_image_random, translate_image_random, 
-                            higher_contrast_random, change_brightness_random, rotate_hsv_random,
-                            canny_edge, add_noise_random]
-            
-            # execute the functions 
-            [img, label] = stretch_img_random(img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
+                         flip_image_random, rotate_image_random, translate_image_random,
+                         higher_contrast_random, change_brightness_random, rotate_hsv_random,
+                         canny_edge, add_noise_random]
+
+            # execute the functions
+            [img, label] = stretch_img_random(
+                img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
             [img, label] = shear_img_random(img, label)
             [img, label] = zoom_image_random(img, label)
             # [img, label] = flip_image_random(img, label)  #Robert
             # [img, label] = rotate_image_random(img, label) #Robert
-            # [img, label] = translate_image_random(img, label) #Robert
+            [img, label] = translate_image_random(img, label)  # Robert
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
             img = rotate_hsv_random(img)
@@ -512,24 +524,25 @@ def augment_images(directory):
             img = add_noise_random(img)
 
             # draw bounding box from label on image
-            top = int((label[0] - label[2]/2))
-            bottom = int((label[0] + label[2]/2))
-            left = int((label[1] - label[3]/2))
-            right = int((label[1] + label[3]/2))
+            top = int((label[1] - label[3]/2))
+            bottom = int((label[1] + label[3]/2))
+            left = int((label[0] - label[2]/2))
+            right = int((label[0] + label[2]/2))
 
-            cv2.rectangle(img, (left, top), (right, bottom), (0,255, 0), 20)
+            cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 8)
             cv2.imshow('image', img)
             cv2.waitKey(0)
             continue
 
             # save the image
-            currentEpochTime = 	int(round(time.time() * 1000))
-            safeDir =  os.path.join(directory, image[:-4] + '_aug_' + str(currentEpochTime))
+            currentEpochTime = int(round(time.time() * 1000))
+            safeDir = os.path.join(
+                directory, image[:-4] + '_aug_' + str(currentEpochTime))
             cv2.imwrite(safeDir + '.png', img)
             # save the label
             labelFile = open(safeDir + '.txt', 'w')
-            labelFile.write(str(labelOrg[0]) + ' ' + str(label[0]) + ' ' + 
-                            str(label[1]) + ' ' + str(label[2]) + ' ' + 
+            labelFile.write(str(labelOrg[0]) + ' ' + str(label[0]) + ' ' +
+                            str(label[1]) + ' ' + str(label[2]) + ' ' +
                             str(label[3]))
             labelFile.close()
 
@@ -538,9 +551,6 @@ def augment_images(directory):
             if amount >= target:
                 # break forloop and while loop
                 break
-
-
-        
 
 
 if __name__ == '__main__':
