@@ -11,6 +11,56 @@ import time  # for timing
 # scale the images (this need to change to a function that keeps the same resolution as before)
 
 
+def get_new_boundingBox(boundingBox, M, width, height):
+    # convert to corner cordinates
+    boundingBoxTL = [boundingBox[0] - boundingBox[2] /
+                     2, boundingBox[1] - boundingBox[3] / 2, 1]
+    boundingBoxTR = [boundingBox[0] + boundingBox[2] /
+                     2, boundingBox[1] - boundingBox[3] / 2, 1]
+    boundingBoxBL = [boundingBox[0] - boundingBox[2] /
+                     2, boundingBox[1] + boundingBox[3] / 2, 1]
+    boundingBoxBR = [boundingBox[0] + boundingBox[2] /
+                     2, boundingBox[1] + boundingBox[3] / 2, 1]
+
+    # calculate new positions
+    newBoundingBoxTL = M.dot(boundingBoxTL)
+    newBoundingBoxTR = M.dot(boundingBoxTR)
+    newBoundingBoxBL = M.dot(boundingBoxBL)
+    newBoundingBoxBR = M.dot(boundingBoxBR)
+
+    # make list for more readable code
+    xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
+               newBoundingBoxBL[0], newBoundingBoxBR[0], ]
+
+    yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
+               newBoundingBoxBL[1], newBoundingBoxBR[1], ]
+
+    # calculate minimum and maximum values for new bounding box
+    # NOTE this method of creating a new bounding box only works with resizing and translating
+    # rotations and sheering can result in bounding boxes that are to big
+    # fixing this would recuire having a label for every pixel, whether this is the object or background
+    top = height
+    bottom = 0
+    left = width
+    right = 0
+
+    for x in xValues:
+        if x < left:
+            left = x
+        if x > right:
+            right = x
+
+    for y in yValues:
+        if y < top:
+            top = y
+        if y > bottom:
+            bottom = y
+
+    # reconstruct new bounding box
+
+    return [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+
+
 def stretch_img_random(img, boundingBox=None):
     height, width = img.shape[:2]
 
@@ -36,54 +86,7 @@ def stretch_img_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M[:2], (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M, width, height)
 
     return output
 
@@ -109,54 +112,7 @@ def shear_img_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M[:2], (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M, width, height)
 
     return output
 
@@ -184,54 +140,7 @@ def zoom_image_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M[:2], (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M, width, height)
 
     return output
 
@@ -297,54 +206,7 @@ def translate_image_random(img, boundingBox=None):
     output = cv2.warpAffine(img, M, (width, height))
 
     if boundingBox != None:
-
-        # convert to corner cordinates
-        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] - boundingBox[3] / 2, 1]
-        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
-                         2, boundingBox[1] + boundingBox[3] / 2, 1]
-
-        # calculate new positions
-        newBoundingBoxTL = M.dot(boundingBoxTL)
-        newBoundingBoxTR = M.dot(boundingBoxTR)
-        newBoundingBoxBL = M.dot(boundingBoxBL)
-        newBoundingBoxBR = M.dot(boundingBoxBR)
-
-        # make list for more readable code
-        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
-                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
-
-        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
-                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
-
-        # calculate minimum and maximum values for new bounding box
-        # NOTE this method of creating a new bounding box only works with resizing and translating
-        # rotations and sheering can result in bounding boxes that are to big
-        # fixing this would recuire having a label for every pixel, whether this is the object or background
-        top = height
-        bottom = 0
-        left = width
-        right = 0
-
-        for x in xValues:
-            if x < left:
-                left = x
-            if x > right:
-                right = x
-
-        for y in yValues:
-            if y < top:
-                top = y
-            if y > bottom:
-                bottom = y
-
-        # reconstruct new bounding box
-
-        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+        return output, get_new_boundingBox(boundingBox, M, width, height)
 
     return output
 
