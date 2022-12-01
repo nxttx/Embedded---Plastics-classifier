@@ -457,7 +457,9 @@ def augment_images(directory):
         if image.endswith(".png") and not '_ignore' in image:
             amount += 1
 
-    while amount < 200:
+    target = 200
+
+    while amount < target:
         # loop over all images in the directory
         for image in images:
             # if image includes '_ignore' or .txt skip it
@@ -507,7 +509,7 @@ def augment_images(directory):
 
             amount += 1
 
-            if amount >= 1000:
+            if amount >= target:
                 # break forloop and while loop
                 break
 
