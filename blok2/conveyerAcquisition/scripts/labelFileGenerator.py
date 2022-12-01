@@ -32,8 +32,10 @@ def remove_background(src):
         {Mat} The image with the background removed.
     '''
 
-    # find first whiteish line
-    # for i in range(src.shape[0]):
+    src = src.copy()
+
+    # # find first whiteish line
+    # for i in range(src.shape[0]):	
     #     if np.sum(src[i, :, :]) > 255 * 3 * 100:
     #         break
 
@@ -43,79 +45,36 @@ def remove_background(src):
     # # find last whiteish line
     # for i in range(src.shape[0] - 1, 0, -1):
     #     if np.sum(src[i, :, :]) > 255 * 3 * 100:
-    #         break
+    #         break 
 
     # # remove line and everything below
     # src[i-30:, :, :] = 0
 
-    # # small gaussian blur
-    # src = cv2.GaussianBlur(src, (3,3), 0)
+    # small gaussian blur
+    src = cv2.GaussianBlur(src, (3,3), 0)
 
-    # # simplefy image to 8bit colors
-    # src = cv2.convertScaleAbs(src, alpha=0.03)
+    # simplefy image to 8bit colors
+    src = cv2.convertScaleAbs(src, alpha=0.03)
+    
 
-    # # add laplacian filter
-    # src = cv2.Laplacian(src, cv2.CV_8U)
-
-    # # histogram equalization
-    # src = cv2.cvtColor(src, cv2.COLOR_BGR2YUV)
-    # src[:, :, 0] = cv2.equalizeHist(src[:, :, 0])
-    # src = cv2.cvtColor(src, cv2.COLOR_YUV2BGR)
-
-    dst = src.copy()
-
-    # opening
-    kernel = np.ones((3, 3), np.uint8)
-    dst = cv2.erode(dst, kernel, iterations=1)
-    dst = cv2.dilate(dst, kernel, iterations=1)
-
-    src = src - dst
+    # add laplacian filter
+    src = cv2.Laplacian(src, cv2.CV_8U)
 
     # histogram equalization
-    red = src[:, :, 2]
-    red = cv2.equalizeHist(red)
-    src[:, :, 2] = red
+    src = cv2.cvtColor(src, cv2.COLOR_BGR2YUV)
+    src[:, :, 0] = cv2.equalizeHist(src[:, :, 0])
+    src = cv2.cvtColor(src, cv2.COLOR_YUV2BGR)
 
-    green = src[:, :, 1]
-    green = cv2.equalizeHist(green)
-    src[:, :, 1] = green
 
-    blue = src[:, :, 0]
-    blue = cv2.equalizeHist(blue)
-    src[:, :, 0] = blue
-
-    src = cv2.medianBlur(src, 3)
-
-    # # convert to hsv
-    # src = cv2.cvtColor(src, cv2.COLOR_BGR2HSV)
-
-    # # filter
-    # lower = np.array([0, 0, 200])
-    # upper = np.array([255, 50, 255])
-    # mask = cv2.inRange(src, lower, upper)
-
-    # # remove background
-    # src[mask == 0] = 0
-
-    # # convert back to bgr
-    # src = cv2.cvtColor(src, cv2.COLOR_HSV2BGR)
-
-    # medfilt2d
-    # src = cv2.medianBlur(src, 3)
-
-    # # opening
-    # biggerkernel = np.ones((25, 25), np.uint8)
-    # src = cv2.dilate(src, biggerkernel, iterations=1)
-    # src = cv2.erode(src, biggerkernel, iterations=1)
-
-    # # closing
-    # src = cv2.erode(src, kernel, iterations=1)
-    # src = cv2.dilate(src, kernel, iterations=1)
+    # add gaussian blur
+    src = cv2.GaussianBlur(src, (3,3), 0)
+    
 
     return src
 
 
-def get_bounding_box(src):
+
+def get_bounding_box(org):
     '''
     Get the bounding box of the object in the image.
 
@@ -125,11 +84,13 @@ def get_bounding_box(src):
         Output: {int[]} - The bounding box coordinates.   
     '''
 
+    src = org.copy()
     src = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
 
+
+
     # find the contours in the image
-    contours, hierarchy = cv2.findContours(
-        src, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(src, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     # find the biggest contour
     max_area = 0
@@ -143,13 +104,76 @@ def get_bounding_box(src):
 
     # get the bounding box of the biggest contour + some padding
     x, y, w, h = cv2.boundingRect(max_cnt)
-    x -= 10
-    y -= 10
-    w += 20
-    h += 20
+    # add 50px padding
+    x -= 50
+    y -= 50
+    w += 50
+    h += 50
 
+
+    # draw the bounding box on org without changing org
+    org2 = org.copy()
+    cv2.rectangle(org2, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    cv2.imshow('CALCULATED BOUNDING BOX', org2)
+
+    # ask user to confirm the bounding box 
+    while True:
+        print('Is the bounding box correct? (y/n/q)')
+        key = cv2.waitKey(0)
+        if key == ord('y'):
+            break
+        elif key == ord('q'):
+            exit()
+        elif key == ord('n'):
+            # get new bounding box
+            x, y, w, h = cv2.selectROI(org)
+            cv2.rectangle(org, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            cv2.imshow('COMFIRM', org)
+            break
+
+
+
+    cv2.destroyAllWindows()
     # return the bounding box
     return [x, y, w, h]
+
+def generateLabelFile(dir, label):
+    '''
+    Generate the labelfile with the images in the given directory.
+
+    Arguments:
+        {string[]} images: The images.
+        {string} dir: The directory.
+    Returns:
+        Output: void
+    '''
+    images = os.listdir(dir)
+
+    for image in images:
+        # clear previous frames and console
+        os.system('cls' if os.name == 'nt' else 'clear')
+        cv2.destroyAllWindows()
+
+        # if image includes '_ignore' or .txt skip it
+        if '_ignore' in image or '.txt' in image:
+            continue
+
+
+        img = cv2.imread(os.path.join(dir, image))
+        cv2.imshow("org", img)
+        WB = remove_background(img)
+        x, y, w, h = get_bounding_box(WB)
+
+
+        x = cv2.waitKey(0)
+        if x == ord("q"):
+            break
+
+        # now write label file
+        with open(os.path.join(dir, image.replace('.png', '.txt')), 'w') as f:
+            f.write('{} {} {} {} {}'.format(label, x+w/2, y+h/2, w, h))
+
+
 
 
 if __name__ == "__main__":
@@ -164,36 +188,16 @@ if __name__ == "__main__":
     spoon_dir = os.path.join(root_dir, "spoon")
     styrofoam_dir = os.path.join(root_dir, "styrofoam")
 
-    # get all images in the dataset
-    bag_images = os.listdir(bag_dir)
-    bottle_images = os.listdir(bottle_dir)
-    bottlecap_images = os.listdir(bottlecap_dir)
-    fork_images = os.listdir(fork_dir)
-    knife_images = os.listdir(knife_dir)
-    pen_images = os.listdir(pen_dir)
-    spoon_images = os.listdir(spoon_dir)
-    styrofoam_images = os.listdir(styrofoam_dir)
 
-    # loop over every image and generate label file
-    for image in knife_images:
-        img = cv2.imread(os.path.join(knife_dir, image))
-        cv2.imshow("org", img)
-        WB = remove_background(img)
-        cv2.imshow("WB", WB)
-        x, y, w, h = get_bounding_box(WB)
+    # generate label files
+    generateLabelFile(bag_dir, 1)
+    generateLabelFile(bottle_dir, 2)
+    generateLabelFile(bottlecap_dir, 3)
+    generateLabelFile(fork_dir, 4)
+    generateLabelFile(knife_dir, 5)
+    generateLabelFile(pen_dir, 6)
+    generateLabelFile(spoon_dir, 7)
+    generateLabelFile(styrofoam_dir, 8)
 
-        # draw bounding box on image
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        cv2.rectangle(WB, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        cv2.imshow("WBBB", WB)
-
-        cv2.imshow("BB", img)
-        x = cv2.waitKey(0)
-        print(x)
-        if x == ord('w'):
-            break
-
-        # # now write label file
-        # with open(os.path.join(bag_dir, image.replace('.jpg', '.txt')), 'w') as f:
-        #     f.write('1 {} {} {} {}'.format(x+w/2, y+h/2, w, h))
-cv2.destroyAllWindows()
+    
+    
