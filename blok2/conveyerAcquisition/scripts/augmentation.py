@@ -245,6 +245,12 @@ def flip_image_random(img, boundingBox=None):
         output: flipped image (Mat object)
     '''
     output = cv2.flip(img, random.randint(-2, 1))
+
+    if boundingBox != None:
+        # flip the bounding box
+        # TODO
+        return output, boundingBox
+
     return output
 
 # rotate the images
@@ -256,10 +262,18 @@ def rotate_image_random(img, boundingBox=None):
         output: rotated image (Mat object)
     '''
     a = random.randint(0, 3)
-    if a == 3:
-        return img
+    output = cv2.rotate(img, a)
 
-    return cv2.rotate(img, a)
+    if a == 3:
+        output = img
+
+    if boundingBox != None:
+        # flip the bounding box
+        # TODO
+        return output, boundingBox
+    
+
+    return output
 
 # translate the images
 def translate_image_random(img, boundingBox=None):
@@ -436,52 +450,66 @@ def augment_images(directory):
     '''
     # get all images in the directory
     images = os.listdir(directory)
-    # create empty list
-    augmented_images = []
-    # loop over all images in the directory
+
+    # get the amount of images in the directory without counting the .txt files
+    amount = 0
     for image in images:
-        # if image includes '_ignore' or .txt skip it
-        if '_ignore' in image or '.txt' in image:
-            continue
-        # read the image
-        img = cv2.imread(directory + image)
-        # read the label file
-        labelOrg = open(directory + image[:-4] + '.txt', 'r')
-        # read the label
-        labelOrg = labelOrg.read()
-        # split the label
-        labelOrg = labelOrg.split(' ')
+        if image.endswith(".png") and not '_ignore' in image:
+            amount += 1
 
-        # create a list of all the functions
-        functions = [stretch_img_random, shear_img_random, zoom_image_random,
-                        flip_image_random, rotate_image_random, translate_image_random, 
-                        higher_contrast_random, change_brightness_random, rotate_hsv_random,
-                        canny_edge, add_noise_random]
-        
-        # execute the functions 
-        [img, label] = stretch_img_random(img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
-        [img, label] = shear_img_random(img, label)
-        [img, label] = zoom_image_random(img, label)
-        [img, label] = flip_image_random(img, label)
-        [img, label] = rotate_image_random(img, label)
-        [img, label] = translate_image_random(img, label)
-        img = higher_contrast_random(img)
-        img = change_brightness_random(img)
-        img = rotate_hsv_random(img)
-        img = canny_edge(img)
-        img = add_noise_random(img)
+    while amount < 200:
+        # loop over all images in the directory
+        for image in images:
+            # if image includes '_ignore' or .txt skip it
+            if '_ignore' in image or '.txt' in image:
+                continue
+            # read the image
+            img = cv2.imread( os.path.join(directory, image))
+            # read the label file
+            labelOrg = open( os.path.join(directory, image[:-4] + '.txt'), 'r')
+            # read the label
+            labelOrg = labelOrg.read()
+            # split the label
+            labelOrg = labelOrg.split(' ')
+            # convert item 1234 to float but keep the first item a string
+            labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
+            
 
-        # save the image
-        currentEpochTime = 	int(round(time.time() * 1000));
-        safeDir = directory + image[:-4] + '_aug_' + str(currentEpochTime)
-        cv2.imwrite(safeDir + '.jpg', img)
-        # save the label
-        labelFile = open(safeDir + '.txt', 'w')
-        labelFile.write(labelOrg[0] + label)
-        labelFile.close()
+            # create a list of all the functions
+            functions = [stretch_img_random, shear_img_random, zoom_image_random,
+                            flip_image_random, rotate_image_random, translate_image_random, 
+                            higher_contrast_random, change_brightness_random, rotate_hsv_random,
+                            canny_edge, add_noise_random]
+            
+            # execute the functions 
+            [img, label] = stretch_img_random(img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
+            [img, label] = shear_img_random(img, label)
+            [img, label] = zoom_image_random(img, label)
+            [img, label] = flip_image_random(img, label)
+            [img, label] = rotate_image_random(img, label)
+            [img, label] = translate_image_random(img, label)
+            img = higher_contrast_random(img)
+            img = change_brightness_random(img)
+            img = rotate_hsv_random(img)
+            img = canny_edge(img)
+            img = add_noise_random(img)
 
-        # die
-        sys.exit()
+            # save the image
+            currentEpochTime = 	int(round(time.time() * 1000))
+            safeDir =  os.path.join(directory, image[:-4] + '_aug_' + str(currentEpochTime))
+            cv2.imwrite(safeDir + '.png', img)
+            # save the label
+            labelFile = open(safeDir + '.txt', 'w')
+            labelFile.write(str(labelOrg[0]) + ' ' + str(label[0]) + ' ' + 
+                            str(label[1]) + ' ' + str(label[2]) + ' ' + 
+                            str(label[3]))
+            labelFile.close()
+
+            amount += 1
+
+            if amount >= 1000:
+                # break forloop and while loop
+                break
 
 
         
