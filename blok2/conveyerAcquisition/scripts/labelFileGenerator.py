@@ -104,12 +104,12 @@ def get_bounding_box(org):
 
     # get the bounding box of the biggest contour + some padding
     x, y, w, h = cv2.boundingRect(max_cnt)
+    
     # add 50px padding
     x -= 50
     y -= 50
     w += 50
     h += 50
-
 
     # draw the bounding box on org without changing org
     org2 = org.copy()
@@ -134,9 +134,16 @@ def get_bounding_box(org):
 
 
     cv2.destroyAllWindows()
+    
+    # normalize boundingRect
+    x = x / org.shape[1]
+    y = y / org.shape[0]
+    w = w / org.shape[1]
+    h = h / org.shape[0]
+    
     # return the bounding box
     return [x, y, w, h]
-
+    
 def generateLabelFile(dir, label):
     '''
     Generate the labelfile with the images in the given directory.
