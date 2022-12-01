@@ -475,6 +475,21 @@ def augment_images(directory):
             labelOrg = labelOrg.split(' ')
             # convert item 1234 to float but keep the first item a string
             labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
+
+            # draw bounding box from label on image
+            top = int((labelOrg[2] - labelOrg[4]/2) * img.shape[0])
+            bottom = int((labelOrg[2] + labelOrg[4]/2) * img.shape[0])
+            left = int((labelOrg[1] - labelOrg[3]/2) * img.shape[1])
+            right = int((labelOrg[1] + labelOrg[3]/2) * img.shape[1])
+
+            cv2.rectangle(img, (left, top), (right, bottom), (255,0, 0), 20)
+
+
+            # de normalize the label
+            labelOrg[1] = labelOrg[1] * img.shape[0]
+            labelOrg[2] = labelOrg[2] * img.shape[1]
+            labelOrg[3] = labelOrg[3] * img.shape[0]
+            labelOrg[4] = labelOrg[4] * img.shape[1]
             
 
             # create a list of all the functions
@@ -487,14 +502,25 @@ def augment_images(directory):
             [img, label] = stretch_img_random(img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
             [img, label] = shear_img_random(img, label)
             [img, label] = zoom_image_random(img, label)
-            [img, label] = flip_image_random(img, label)
-            [img, label] = rotate_image_random(img, label)
-            [img, label] = translate_image_random(img, label)
+            # [img, label] = flip_image_random(img, label)  #Robert
+            # [img, label] = rotate_image_random(img, label) #Robert
+            # [img, label] = translate_image_random(img, label) #Robert
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
             img = rotate_hsv_random(img)
             img = canny_edge(img)
             img = add_noise_random(img)
+
+            # draw bounding box from label on image
+            top = int((label[0] - label[2]/2))
+            bottom = int((label[0] + label[2]/2))
+            left = int((label[1] - label[3]/2))
+            right = int((label[1] + label[3]/2))
+
+            cv2.rectangle(img, (left, top), (right, bottom), (0,255, 0), 20)
+            cv2.imshow('image', img)
+            cv2.waitKey(0)
+            continue
 
             # save the image
             currentEpochTime = 	int(round(time.time() * 1000))
