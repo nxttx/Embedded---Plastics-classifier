@@ -10,7 +10,7 @@ import time  # for timing
 # scale the images (this need to change to a function that keeps the same resolution as before)
 
 
-def stretch_img_random(img):
+def stretch_img_random(img, boundingBox=None):
     height, width = img.shape[:2]
 
     stretchCoefficient = 0.4
@@ -34,10 +34,60 @@ def stretch_img_random(img):
 
     output = cv2.warpAffine(img, M[:2], (width, height))
 
+    if boundingBox != None:
+
+        # convert to corner cordinates
+        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+
+        # calculate new positions
+        newBoundingBoxTL = M.dot(boundingBoxTL)
+        newBoundingBoxTR = M.dot(boundingBoxTR)
+        newBoundingBoxBL = M.dot(boundingBoxBL)
+        newBoundingBoxBR = M.dot(boundingBoxBR)
+
+        # make list for more readable code
+        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
+                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
+
+        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
+                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
+
+        # calculate minimum and maximum values for new bounding box
+        # NOTE this method of creating a new bounding box only works with resizing and translating
+        # rotations and sheering can result in bounding boxes that are to big
+        # fixing this would recuire having a label for every pixel, whether this is the object or background
+        top = height
+        bottom = 0
+        left = width
+        right = 0
+
+        for x in xValues:
+            if x < left:
+                left = x
+            if x > right:
+                right = x
+
+        for y in yValues:
+            if y < top:
+                top = y
+            if y > bottom:
+                bottom = y
+
+        # reconstruct new bounding box
+
+        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+
     return output
 
 
-def shear_img_random(img):
+def shear_img_random(img, boundingBox=None):
     '''
         function that shears the image randomly
         input: image (Mat object)
@@ -57,10 +107,60 @@ def shear_img_random(img):
 
     output = cv2.warpAffine(img, M[:2], (width, height))
 
+    if boundingBox != None:
+
+        # convert to corner cordinates
+        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+
+        # calculate new positions
+        newBoundingBoxTL = M.dot(boundingBoxTL)
+        newBoundingBoxTR = M.dot(boundingBoxTR)
+        newBoundingBoxBL = M.dot(boundingBoxBL)
+        newBoundingBoxBR = M.dot(boundingBoxBR)
+
+        # make list for more readable code
+        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
+                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
+
+        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
+                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
+
+        # calculate minimum and maximum values for new bounding box
+        # NOTE this method of creating a new bounding box only works with resizing and translating
+        # rotations and sheering can result in bounding boxes that are to big
+        # fixing this would recuire having a label for every pixel, whether this is the object or background
+        top = height
+        bottom = 0
+        left = width
+        right = 0
+
+        for x in xValues:
+            if x < left:
+                left = x
+            if x > right:
+                right = x
+
+        for y in yValues:
+            if y < top:
+                top = y
+            if y > bottom:
+                bottom = y
+
+        # reconstruct new bounding box
+
+        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+
     return output
 
 
-def zoom_image_random(img):
+def zoom_image_random(img, boundingBox=None):
     '''
         function that scales the image randomly
         input: image (Mat object)
@@ -82,6 +182,56 @@ def zoom_image_random(img):
 
     output = cv2.warpAffine(img, M[:2], (width, height))
 
+    if boundingBox != None:
+
+        # convert to corner cordinates
+        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+
+        # calculate new positions
+        newBoundingBoxTL = M.dot(boundingBoxTL)
+        newBoundingBoxTR = M.dot(boundingBoxTR)
+        newBoundingBoxBL = M.dot(boundingBoxBL)
+        newBoundingBoxBR = M.dot(boundingBoxBR)
+
+        # make list for more readable code
+        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
+                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
+
+        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
+                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
+
+        # calculate minimum and maximum values for new bounding box
+        # NOTE this method of creating a new bounding box only works with resizing and translating
+        # rotations and sheering can result in bounding boxes that are to big
+        # fixing this would recuire having a label for every pixel, whether this is the object or background
+        top = height
+        bottom = 0
+        left = width
+        right = 0
+
+        for x in xValues:
+            if x < left:
+                left = x
+            if x > right:
+                right = x
+
+        for y in yValues:
+            if y < top:
+                top = y
+            if y > bottom:
+                bottom = y
+
+        # reconstruct new bounding box
+
+        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+
     return output
 
 
@@ -96,6 +246,8 @@ def flip_image_random(img):
     return output
 
 # rotate the images
+
+
 def rotate_image_random(img):
     '''
         function that rotates the image randomly
@@ -109,7 +261,9 @@ def rotate_image_random(img):
     return cv2.rotate(img, a)
 
 # translate the images
-def translate_image_random(img):
+
+
+def translate_image_random(img, boundingBox=None):
     '''
         function that translates the image randomly
         input: image (Mat object)
@@ -125,9 +279,62 @@ def translate_image_random(img):
     M = np.float32([[1, 0, new_width], [0, 1, new_height]])  # type: ignore
     # Apply translation
     output = cv2.warpAffine(img, M, (width, height))
+
+    if boundingBox != None:
+
+        # convert to corner cordinates
+        boundingBoxTL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxTR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] - boundingBox[3] / 2, 1]
+        boundingBoxBL = [boundingBox[0] - boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+        boundingBoxBR = [boundingBox[0] + boundingBox[2] /
+                         2, boundingBox[1] + boundingBox[3] / 2, 1]
+
+        # calculate new positions
+        newBoundingBoxTL = M.dot(boundingBoxTL)
+        newBoundingBoxTR = M.dot(boundingBoxTR)
+        newBoundingBoxBL = M.dot(boundingBoxBL)
+        newBoundingBoxBR = M.dot(boundingBoxBR)
+
+        # make list for more readable code
+        xValues = [newBoundingBoxTL[0], newBoundingBoxTR[0],
+                   newBoundingBoxBL[0], newBoundingBoxBR[0], ]
+
+        yValues = [newBoundingBoxTL[1], newBoundingBoxTR[1],
+                   newBoundingBoxBL[1], newBoundingBoxBR[1], ]
+
+        # calculate minimum and maximum values for new bounding box
+        # NOTE this method of creating a new bounding box only works with resizing and translating
+        # rotations and sheering can result in bounding boxes that are to big
+        # fixing this would recuire having a label for every pixel, whether this is the object or background
+        top = height
+        bottom = 0
+        left = width
+        right = 0
+
+        for x in xValues:
+            if x < left:
+                left = x
+            if x > right:
+                right = x
+
+        for y in yValues:
+            if y < top:
+                top = y
+            if y > bottom:
+                bottom = y
+
+        # reconstruct new bounding box
+
+        return output, [(left + right) / 2, (top + bottom) / 2, right - left, bottom - top]
+
     return output
 
 # higher contrast
+
+
 def higher_contrast_random(img):
     '''
         function that highers the contrast of the image randomly
@@ -150,6 +357,8 @@ def higher_contrast_random(img):
     return output
 
 # change brightness
+
+
 def change_brightness_random(img):
     '''
         function that changes the brightness of the image randomly
@@ -166,6 +375,8 @@ def change_brightness_random(img):
     return output
 
 # rotate on hsv values
+
+
 def rotate_hsv_random(img):
     '''
         function that rotates the image randomly
@@ -214,7 +425,7 @@ img = cv2.imread(os.path.join("blok2", "v1", "data", "test_img.jpg"))
 cv2.imshow("original", img)
 # scale image
 while (cv2.waitKey(500) != 27):
-    img2 = stretch_img_random(img)
+    img2, _ = stretch_img_random(img)
 # show image
     cv2.imshow("image", img2)
 
