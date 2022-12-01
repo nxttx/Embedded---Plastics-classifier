@@ -1,2 +1,5 @@
 # # ignore all .txt files (label files)
 # *.txt
+
+# ignore all _aug_ files (augmented images)
+*_aug_*
