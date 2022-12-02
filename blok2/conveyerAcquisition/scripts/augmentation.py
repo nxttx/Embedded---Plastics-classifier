@@ -168,21 +168,28 @@ def flip_image_random(img, boundingBox=None):
         binaryImage = np.zeros(img.shape[:2], np.uint8)
 
         # set bounding box
-        top    = int(boundingBox[1] - boundingBox[3]/2)
-        bottom = int(boundingBox[1] + boundingBox[3]/2)
-        left   = int(boundingBox[0] - boundingBox[2]/2)
-        right  = int(boundingBox[0] + boundingBox[2]/2)
 
-        cv2.rectangle(binaryImage, (left, top), (right, bottom), 255, 0)
+        x = int(boundingBox[0])
+        y = int(boundingBox[1])
+        w = int(boundingBox[2])
+        h = int(boundingBox[3])
+
+        # print(x, y, w, h)
+        # print('-------------------------') 
+        cv2.rectangle(binaryImage, (x, y), (x+w, y+h), 255, 0)
+
+        # cv2.imshow('binaryImage', binaryImage)
         
         # flip the binary image
         binaryImage = cv2.flip(binaryImage, randomNumber)
+
+        # cv2.imshow('binaryImageFlipped', binaryImage)
 
         # get the bounding box from the binary image
         [x, y, w, h] = cv2.boundingRect(binaryImage)
 
         # return the flipped image and the new bounding box
-        return output, [x + w/2, y + h/2, w, h]
+        return output, [x, y, w, h]
 
 
 
@@ -198,22 +205,67 @@ def rotate_image_random(img, boundingBox=None):
         input: image (Mat object)
         output: rotated image (Mat object)
     '''
-    height, width = img.shape[:2]
+    # height, width = img.shape[:2]
 
-    rotateAngle = random.randint(0, 3) * math.pi / 2
+    # rotateAngle = random.randint(0, 3) * math.pi / 2
 
-    v1 = [math.cos(rotateAngle), math.sin(rotateAngle), 0]
-    v2 = [-math.sin(rotateAngle), math.cos(rotateAngle), 0]
+    # v1 = [math.cos(rotateAngle), math.sin(rotateAngle), 0]
+    # v2 = [-math.sin(rotateAngle), math.cos(rotateAngle), 0]
 
-    M = np.matmul(np.float32(
-        [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), np.float32([v1, v2, [0, 0, 1]]))
-    M = np.matmul(M, np.float32(
-        [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))
+    # M = np.matmul(np.float32(
+    #     [[1, 0, width / 2], [0, 1, height / 2], [0, 0, 1]]), np.float32([v1, v2, [0, 0, 1]]))
+    # M = np.matmul(M, np.float32(
+    #     [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))
 
-    output = cv2.warpAffine(img, M[:2], (width, height))
+    # output = cv2.warpAffine(img, M[:2], (width, height))
+
+    # if boundingBox != None:
+    #     return output, get_new_boundingBox(boundingBox, M, width, height)
+
+    randomNumber = random.randint(0, 3)
+
+    if(randomNumber == 3): # no rotation
+        if boundingBox != None: # if there is a bounding box
+            return img, boundingBox # return the image and the bounding box
+        else: # if there is no bounding box
+            return img # return the image
+    
+    output = cv2.rotate(img, randomNumber)
 
     if boundingBox != None:
-        return output, get_new_boundingBox(boundingBox, M, width, height)
+        # rotate the bounding box
+        # get bouding box by creating a binary image
+        # then setting the bounding box into the binary image
+        # then rotate the binary image
+        # then get the bounding box from the binary image
+
+        # create binary image
+        binaryImage = np.zeros(img.shape[:2], np.uint8)
+
+        # set bounding box
+
+        x = int(boundingBox[0])
+        y = int(boundingBox[1])
+        w = int(boundingBox[2])
+        h = int(boundingBox[3])
+
+        # print(x, y, w, h)
+        # print('-------------------------') 
+        cv2.rectangle(binaryImage, (x, y), (x+w, y+h), 255, 0)
+
+        # cv2.imshow('binaryImage', binaryImage)
+        
+        # flip the binary image
+        binaryImage = cv2.rotate(binaryImage, randomNumber)
+
+        # cv2.imshow('binaryImageFlipped', binaryImage)
+
+        # get the bounding box from the binary image
+        [x, y, w, h] = cv2.boundingRect(binaryImage)
+
+        # return the flipped image and the new bounding box
+        return output, [x, y, w, h]
+
 
     return output
 
@@ -407,15 +459,15 @@ def augment_images(directory):
 
             # print(x, y, w, h)
             # print('-------------------------') 
-            # cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 20)
+            cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 20)
 
             # execute the functions
-            [img, label] = stretch_img_random(
-                img, [x, y, w, h])
-            [img, label] = shear_img_random(img, label)
+            # [img, label] = stretch_img_random(
+            #     img, [x, y, w, h]) # turned off because it is gives to much transformation
+            [img, label] = shear_img_random(img,  [x, y, w, h])
             [img, label] = zoom_image_random(img, label)
             [img, label] = flip_image_random(img, label)  
-            [img, label] = rotate_image_random(img, label)  
+            # [img, label] = rotate_image_random(img, label)   # turned off because it rotates the image witch could change the aspect ratio
             [img, label] = translate_image_random(img, label)  
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
@@ -429,9 +481,12 @@ def augment_images(directory):
             w = int(label[2])
             h = int(label[3])
 
-            # img2 = img.copy()	
-            # cv2.rectangle(img2, (x, y), (w, h), (0, 255, 0), 8)
-            # cv2.imshow('image', img2)
+
+            #### SHOW IMAGE ####
+            img2 = img.copy()	
+            cv2.rectangle(img2, (x, y), (x+w, y+h), (0, 255, 0), 8)
+            cv2.imshow('image', img2)
+
             # if cv2.waitKey(0) & 0xFF == ord('q'):
             #     sys.exit()
             # continue
