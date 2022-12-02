@@ -147,19 +147,44 @@ def zoom_image_random(img, boundingBox=None):
 
 
 # flip the images horizontally
-# TODO BOUDING BOXES
 def flip_image_random(img, boundingBox=None):
     '''
         function that flips the image randomly
         input: image (Mat object)
         output: flipped image (Mat object)
     '''
-    output = cv2.flip(img, random.randint(-2, 1))
+    randomNumber = random.randint(-2, 1)
+
+    output = cv2.flip(img, randomNumber)
 
     if boundingBox != None:
         # flip the bounding box
-        # TODO
-        return output, boundingBox
+        # get bouding box by creating a binary image
+        # then setting the bounding box into the binary image
+        # then flip the binary image
+        # then get the bounding box from the binary image
+
+        # create binary image
+        binaryImage = np.zeros(img.shape[:2], np.uint8)
+
+        # set bounding box
+        top    = int(boundingBox[1] - boundingBox[3]/2)
+        bottom = int(boundingBox[1] + boundingBox[3]/2)
+        left   = int(boundingBox[0] - boundingBox[2]/2)
+        right  = int(boundingBox[0] + boundingBox[2]/2)
+
+        cv2.rectangle(binaryImage, (left, top), (right, bottom), 255, 0)
+        
+        # flip the binary image
+        binaryImage = cv2.flip(binaryImage, randomNumber)
+
+        # get the bounding box from the binary image
+        [x, y, w, h] = cv2.boundingRect(binaryImage)
+
+        # return the flipped image and the new bounding box
+        return output, [x + w/2, y + h/2, w, h]
+
+
 
     return output
 
@@ -358,13 +383,13 @@ def augment_images(directory):
             # convert item 1234 to float but keep the first item a string
             labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
 
-            # draw bounding box from label on image
-            top = int((labelOrg[2] - labelOrg[4]/2) * img.shape[0])
-            bottom = int((labelOrg[2] + labelOrg[4]/2) * img.shape[0])
-            left = int((labelOrg[1] - labelOrg[3]/2) * img.shape[1])
-            right = int((labelOrg[1] + labelOrg[3]/2) * img.shape[1])
+            # # draw bounding box from label on image
+            # top = int((labelOrg[2] - labelOrg[4]/2) * img.shape[0])
+            # bottom = int((labelOrg[2] + labelOrg[4]/2) * img.shape[0])
+            # left = int((labelOrg[1] - labelOrg[3]/2) * img.shape[1])
+            # right = int((labelOrg[1] + labelOrg[3]/2) * img.shape[1])
 
-            cv2.rectangle(img, (left, top), (right, bottom), (255, 0, 0), 20)
+            # cv2.rectangle(img, (left, top), (right, bottom), (255, 0, 0), 20)
 
             # de normalize the label
             labelOrg[1] = labelOrg[1] * img.shape[1]
@@ -383,25 +408,33 @@ def augment_images(directory):
                 img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
             [img, label] = shear_img_random(img, label)
             [img, label] = zoom_image_random(img, label)
-            # [img, label] = flip_image_random(img, label)  #Robert
-            [img, label] = rotate_image_random(img, label)  # Robert
-            [img, label] = translate_image_random(img, label)  # Robert
+            [img, label] = flip_image_random(img, label)  
+            [img, label] = rotate_image_random(img, label)  
+            [img, label] = translate_image_random(img, label)  
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
             img = rotate_hsv_random(img)
             img = canny_edge(img)
             img = add_noise_random(img)
 
-            # draw bounding box from label on image
-            top = int((label[1] - label[3]/2))
-            bottom = int((label[1] + label[3]/2))
-            left = int((label[0] - label[2]/2))
-            right = int((label[0] + label[2]/2))
+            # # draw bounding box from label on image
+            # top = int((label[1] - label[3]/2))
+            # bottom = int((label[1] + label[3]/2))
+            # left = int((label[0] - label[2]/2))
+            # right = int((label[0] + label[2]/2))
 
-            cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 8)
-            cv2.imshow('image', img)
-            cv2.waitKey(0)
-            continue
+            # cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 8)
+            # cv2.imshow('image', img)
+            # cv2.waitKey(0)
+            # continue
+
+
+            # normalize the label
+            label[0] = label[0] / img.shape[1]  
+            label[1] = label[1] / img.shape[0]
+            label[2] = label[2] / img.shape[1]
+            label[3] = label[3] / img.shape[0]
+
 
             # save the image
             currentEpochTime = int(round(time.time() * 1000))
