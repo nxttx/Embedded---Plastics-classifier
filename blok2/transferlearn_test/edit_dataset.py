@@ -77,11 +77,19 @@ def extract_features(image):
     boundingRect = cv.boundingRect(contour)
     # normalize boundingRect
     x, y, w, h = boundingRect
+    # x = the x coordinate of the top left corner of the rectangle
+    # y = the y coordinate of the top left corner of the rectangle
+    # w = the width of the rectangle
+    # h = the height of the rectangle
+
     x = x / image.shape[1]
     y = y / image.shape[0]
     w = w / image.shape[1]
     h = h / image.shape[0]
 
+    a = x+w / 2 # x coordinate of the center of the rectangle
+    b = y+h / 2 # y coordinate of the center of the rectangle
+    
 
 
     # return the features

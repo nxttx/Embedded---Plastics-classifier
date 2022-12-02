@@ -104,12 +104,11 @@ def get_bounding_box(org):
 
     # get the bounding box of the biggest contour + some padding
     x, y, w, h = cv2.boundingRect(max_cnt)
+    # x = the x coordinate of the top left corner
+    # y = the y coordinate of the top left corner
+    # w = the width of the bounding box
+    # h = the height of the bounding box
     
-    # add 50px padding
-    x -= 50
-    y -= 50
-    w += 50
-    h += 50
 
     # draw the bounding box on org without changing org
     org2 = org.copy()
@@ -127,6 +126,11 @@ def get_bounding_box(org):
         elif key == ord('n'):
             # get new bounding box
             x, y, w, h = cv2.selectROI(org)
+            # x = the x coordinate of the top left corner
+            # y = the y coordinate of the top left corner
+            # w = the width of the bounding box
+            # h = the height of the bounding box
+
             cv2.rectangle(org, (x, y), (x+w, y+h), (0, 255, 0), 2)
             cv2.imshow('COMFIRM', org)
             break
@@ -177,8 +181,11 @@ def generateLabelFile(dir, label):
             break
 
         # now write label file
+        # center x and y coordinates
+        cx = x + w / 2
+        cy = y + h / 2
         with open(os.path.join(dir, image.replace('.png', '.txt')), 'w') as f:
-            f.write('{} {} {} {} {}'.format(label, x+w/2, y+h/2, w, h))
+            f.write('{} {} {} {} {}'.format(label, cx, cy, w, h))
 
 
 

@@ -10,22 +10,51 @@ import random
 import matplotlib.pyplot as plt
 import time  # for timing
 
-def normalize_label_file(label_file, photo_width, photo_height):
+def normalize_label_file(label_file):
     # open the label file
     with open(label_file, 'r') as f:
         lines = f.readlines()
     # open the label file again for writing
     with open(label_file, 'w') as f:
         for line in lines:
+            # open image to get the width and height
+            img = cv2.imread(label_file.replace(".txt", ".png"))
+
             # split the line into columns
             columns = line.split()
-            # normalize the 2,3,4,5 columns
-            columns[1] = str(float(columns[1]) / photo_width)
-            columns[2] = str(float(columns[2]) / photo_height)
-            columns[3] = str(float(columns[3]) / photo_width)
-            columns[4] = str(float(columns[4]) / photo_height)
+
+            # turn x, y from center to top left
+
+            x = float(columns[1]) - float(columns[3])/2
+            y = float(columns[2]) - float(columns[4])/2
+            w = float(columns[3])
+            h = float(columns[4])
+
+            # draw the bounding box
+            cv2.rectangle(img, (int(x), int(y)), (int(x+w), int(y+h)), (0, 255, 0), 2)
+
+            # normalize the x, y, w, h
+            x = x / img.shape[1]
+            y = y / img.shape[0]
+            w = w / img.shape[1]
+            h = h / img.shape[0]
+
+            # now turn the x, y, w, h back to center
+            x = x + w/2
+            y = y + h/2
+            w = w
+            h = h
+
+
+            cv2.imshow("img", img)
+            x = cv2.waitKey(0)
+            if x != 27: # escape key
+                # exit the program
+                sys.exit(0)
+
+
             # write the normalized line to the label file
-            f.write(str(columns[0]) + ' ' + str(columns[1]) + ' ' + str(columns[2]) + ' ' + str(columns[3]) + ' ' + str(columns[4]))
+            f.write(columns[0] + " " + str(x) + " " + str(y) + " " + str(w) + " " + str(h) + " ")
             f.close()
 
 def main():
@@ -51,21 +80,21 @@ def main():
     
     # normalize the label files
     for label_file in bag_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
     for label_file in bottle_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
     for label_file in bottlecap_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
     for label_file in fork_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
     for label_file in knife_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
     for label_file in pen_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
     for label_file in spoon_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
     for label_file in styrofoam_label_files:
-        normalize_label_file(label_file, 640, 480)
+        normalize_label_file(label_file)
 
 if __name__ == "__main__":
     main()
