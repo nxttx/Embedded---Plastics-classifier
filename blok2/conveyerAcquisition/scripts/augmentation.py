@@ -459,7 +459,7 @@ def augment_images(directory):
 
             # print(x, y, w, h)
             # print('-------------------------') 
-            cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 20)
+            # cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 20)
 
             # execute the functions
             # [img, label] = stretch_img_random(
@@ -486,6 +486,7 @@ def augment_images(directory):
             img2 = img.copy()	
             cv2.rectangle(img2, (x, y), (x+w, y+h), (0, 255, 0), 8)
             cv2.imshow('image', img2)
+            cv2.waitKey(1)
 
             # if cv2.waitKey(0) & 0xFF == ord('q'):
             #     sys.exit()
