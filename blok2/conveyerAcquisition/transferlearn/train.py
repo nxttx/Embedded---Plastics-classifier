@@ -79,6 +79,10 @@ import shutil
 
 def split_dataset(type, image_names, train_size, val_size):
     for i, image_name in enumerate(image_names):
+
+        if '_ignore' in image_name: # ignore images with _ignore in the name
+            continue
+
         # Label filename
         label_name = image_name.replace('.png', '.txt')
         
@@ -104,9 +108,16 @@ def split_dataset(type, image_names, train_size, val_size):
 
 
 
-# train_size is amount of images - 50 for each class with 25% for validation and 25% for testing
-split_dataset('hangloose', hangloose_images, train_size=(168-50), val_size=25)
-split_dataset('paper', paper_images, train_size=(163-50), val_size=25)
-split_dataset('rock', rock_images, train_size=(151-50), val_size=25)
-split_dataset('scissors', scissors_images, train_size=(152-50), val_size=25)
+# train_size is amount of images used for training
+train_size = 1000 - 200 - 200 # 200(20%) for validation and 200(20%) for testing
+val_size = 200
+
+split_dataset('bag', bag_images, train_size=train_size, val_size=val_size)
+split_dataset('bottle', bottle_images, train_size=train_size, val_size=val_size)
+split_dataset('bottlecap', bottlecap_images, train_size=train_size, val_size=val_size)
+split_dataset('fork', fork_images, train_size=train_size, val_size=val_size)
+split_dataset('knife', knife_images, train_size=train_size, val_size=val_size)
+split_dataset('pen', pen_images, train_size=train_size, val_size=val_size)
+split_dataset('spoon', spoon_images, train_size=train_size, val_size=val_size)
+split_dataset('styrofoam', styrofoam_images, train_size=train_size, val_size=val_size)
 
