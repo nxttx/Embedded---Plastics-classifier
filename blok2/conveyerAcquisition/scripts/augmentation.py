@@ -419,8 +419,8 @@ def augment_images(directory):
             img = add_noise_random(img)
 
             # draw bounding box from label on image
-            top = int(label[4])                         # ik heb een plaatje getekent, voor mij voelt het logisch als dit enkel de hoogte is
-            bottom = int((label[1] + label[3]/2))       # ik heb een plaatje getekent, volgens mij klopt wat hier stond
+            top = int((label[2] - label[4]/2))          # ik heb een plaatje getekent, volgens mij moet het dit zijn
+            bottom = int(label[4])                      # ik heb een plaatje getekent, voor mij voelt het logisch als dit enkel de hoogte is, maar dit geeft een foutmelding
             left = int((label[1] - label[3]/2))         # ik heb een plaatje getekent, volgens mij moest dit juist dit zijn, wat eerder bij top stond
             right = int((label[3]))                     # ik heb een plaatje getekent, voor mij voelt het logisch als dit enkel de breedte is
 
