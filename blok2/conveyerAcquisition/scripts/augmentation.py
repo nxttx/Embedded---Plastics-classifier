@@ -384,16 +384,16 @@ def augment_images(directory):
             labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
 
             # decenter the bounding box
-            labelOrg[1] = float(labelOrg[1] + labelOrg[3] / 2)
-            labelOrg[2] = float(labelOrg[2] + labelOrg[4] / 2)
+            labelOrg[1] = float(labelOrg[1] + (labelOrg[3] / 2))
+            labelOrg[2] = float(labelOrg[2] + (labelOrg[4] / 2))
             labelOrg[3] = float(labelOrg[3])
-            labelOrg[4] = float(labelOrg[3])
+            labelOrg[4] = float(labelOrg[4])                # aangepast naar float(labelOrg[4]) in plaats van float(labelOrg[3])
 
-            # de normalize the bounding box
-            labelOrg[1] = labelOrg[1] * img.shape[1]
-            labelOrg[2] = labelOrg[2] * img.shape[0]
-            labelOrg[3] = labelOrg[3]
-            labelOrg[4] = labelOrg[4]
+            # denormalize the bounding box
+            labelOrg[1] = labelOrg[1] * img.shape[1]        # waarom vermenigvuldig je met de breedte? Dan kom je toch niet op de juiste coördinaat uit?
+            labelOrg[2] = labelOrg[2] * img.shape[0]        # zelfde als hierboven, maar dan met de hoogte
+            labelOrg[3] = labelOrg[3]                       # moet je hier nog iets mee doen? Want bij de normalizing die hieronder ergens staat wordt dit nog gedeeld
+            labelOrg[4] = labelOrg[4]                       # aangepast naar labelOrg[4] in plaats van labelOrg[3] & moet je hier nog iets mee doen? Want bij de normalizing die hieronder ergens staat wordt dit nog gedeeld
 
 
             cv2.rectangle(img, (int(labelOrg[1]), int(labelOrg[2])), (int(labelOrg[3]), int(labelOrg[4])), (255, 0, 0), 20)
@@ -419,10 +419,10 @@ def augment_images(directory):
             img = add_noise_random(img)
 
             # draw bounding box from label on image
-            top = int((label[1] - label[3]/2))
-            bottom = int((label[1] + label[3]/2))
-            left = int((label[0] - label[2]/2)) # dit klopt ook niet, dit moet width / height volledig zijn
-            right = int((label[0] + label[2]/2)) # dit klopt ook niet, dit moet width / height volledig zijn
+            top = int(label[4])                         # ik heb een plaatje getekent, voor mij voelt het logisch als dit enkel de hoogte is
+            bottom = int((label[1] + label[3]/2))       # ik heb een plaatje getekent, volgens mij klopt wat hier stond
+            left = int((label[1] - label[3]/2))         # ik heb een plaatje getekent, volgens mij moest dit juist dit zijn, wat eerder bij top stond
+            right = int((label[3]))                     # ik heb een plaatje getekent, voor mij voelt het logisch als dit enkel de breedte is
 
             img2 = img.copy()	
 
