@@ -2,10 +2,10 @@ import os
 # 
 # Create a folder structure for YOLOv5 training
 # 
-if not os.path.exists('data'):
+if not os.path.exists('blok2/conveyerAcquisition/transferlearn/data'):
     for folder in ['images', 'labels']:
         for split in ['train', 'val', 'test']:
-            os.makedirs(f'data/{folder}/{split}')
+            os.makedirs(f'blok2/conveyerAcquisition/transferlearn/data/{folder}/{split}')
 
 # 
 # Check for duplicate images
@@ -24,14 +24,14 @@ def get_filenames(folder):
 
 
 # Dog and cat image filename sets
-bag_images = get_filenames('datasets/bag')
-bottle_images = get_filenames('datasets/bottle')
-bottlecap_images = get_filenames('datasets/bottlecap')
-fork_images = get_filenames('datasets/fork')
-knife_images = get_filenames('datasets/knife')
-pen_images = get_filenames('datasets/pen')
-spoon_images = get_filenames('datasets/spoon')
-styrofoam_images = get_filenames('datasets/styrofoam')
+bag_images = get_filenames('blok2/conveyerAcquisition/datasets/bag')
+bottle_images = get_filenames('blok2/conveyerAcquisition/datasets/bottle')
+bottlecap_images = get_filenames('blok2/conveyerAcquisition/datasets/bottlecap')
+fork_images = get_filenames('blok2/conveyerAcquisition/datasets/fork')
+knife_images = get_filenames('blok2/conveyerAcquisition/datasets/knife')
+pen_images = get_filenames('blok2/conveyerAcquisition/datasets/pen')
+spoon_images = get_filenames('blok2/conveyerAcquisition/datasets/spoon')
+styrofoam_images = get_filenames('blok2/conveyerAcquisition/datasets/styrofoam')
 
 
 # 
@@ -95,12 +95,12 @@ def split_dataset(type, image_names, train_size, val_size):
             split = 'test'
         
         # Source paths
-        source_image_path = f'datasets/{type}/{image_name}'
-        source_label_path = f'datasets/{type}/{label_name}'
+        source_image_path = f'blok2/conveyerAcquisition/datasets/{type}/{image_name}'
+        source_label_path = f'blok2/conveyerAcquisition/datasets/{type}/{label_name}'
 
         # Destination paths
-        target_image_folder = f'data/images/{split}'
-        target_label_folder = f'data/labels/{split}'
+        target_image_folder = f'blok2/conveyerAcquisition/data/images/{split}'
+        target_label_folder = f'blok2/conveyerAcquisition/data/labels/{split}'
 
         # Copy files
         shutil.copy(source_image_path, target_image_folder)
