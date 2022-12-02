@@ -383,19 +383,20 @@ def augment_images(directory):
             # convert item 1234 to float but keep the first item a string
             labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
 
-            # # draw bounding box from label on image
-            # top = int((labelOrg[2] - labelOrg[4]/2) * img.shape[0])
-            # bottom = int((labelOrg[2] + labelOrg[4]/2) * img.shape[0])
-            # left = int((labelOrg[1] - labelOrg[3]/2) * img.shape[1])
-            # right = int((labelOrg[1] + labelOrg[3]/2) * img.shape[1])
+            # decenter the bounding box
+            labelOrg[1] = float(labelOrg[1] + labelOrg[3] / 2)
+            labelOrg[2] = float(labelOrg[2] + labelOrg[4] / 2)
+            labelOrg[3] = float(labelOrg[3])
+            labelOrg[4] = float(labelOrg[3])
 
-            # cv2.rectangle(img, (left, top), (right, bottom), (255, 0, 0), 20)
-
-            # de normalize the label
+            # de normalize the bounding box
             labelOrg[1] = labelOrg[1] * img.shape[1]
             labelOrg[2] = labelOrg[2] * img.shape[0]
-            labelOrg[3] = labelOrg[3] * img.shape[1]
-            labelOrg[4] = labelOrg[4] * img.shape[0]
+            labelOrg[3] = labelOrg[3]
+            labelOrg[4] = labelOrg[4]
+
+
+            cv2.rectangle(img, (int(labelOrg[1]), int(labelOrg[2])), (int(labelOrg[3]), int(labelOrg[4])), (255, 0, 0), 20)
 
             # create a list of all the functions
             functions = [stretch_img_random, shear_img_random, zoom_image_random,
@@ -404,29 +405,32 @@ def augment_images(directory):
                          canny_edge, add_noise_random]
 
             # execute the functions
-            [img, label] = stretch_img_random(
-                img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
-            [img, label] = shear_img_random(img, label)
-            [img, label] = zoom_image_random(img, label)
-            [img, label] = flip_image_random(img, label)  
-            [img, label] = rotate_image_random(img, label)  
-            [img, label] = translate_image_random(img, label)  
+            # [img, label] = stretch_img_random(
+            #     img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
+            # [img, label] = shear_img_random(img, label)
+            # [img, label] = zoom_image_random(img, label)
+            [img, label] = flip_image_random(img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])  
+            # [img, label] = rotate_image_random(img, label)  
+            # [img, label] = translate_image_random(img, label)  
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
             img = rotate_hsv_random(img)
             img = canny_edge(img)
             img = add_noise_random(img)
 
-            # # draw bounding box from label on image
-            # top = int((label[1] - label[3]/2))
-            # bottom = int((label[1] + label[3]/2))
-            # left = int((label[0] - label[2]/2))
-            # right = int((label[0] + label[2]/2))
+            # draw bounding box from label on image
+            top = int((label[1] - label[3]/2))
+            bottom = int((label[1] + label[3]/2))
+            left = int((label[0] - label[2]/2)) # dit klopt ook niet, dit moet width / height volledig zijn
+            right = int((label[0] + label[2]/2)) # dit klopt ook niet, dit moet width / height volledig zijn
 
-            # cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 8)
-            # cv2.imshow('image', img)
-            # cv2.waitKey(0)
-            # continue
+            img2 = img.copy()	
+
+            cv2.rectangle(img2, (left, top), (right, bottom), (0, 255, 0), 8)
+            cv2.imshow('image', img2)
+            if cv2.waitKey(0) & 0xFF == ord('q'):
+                sys.exit()
+            continue
 
 
             # normalize the label
