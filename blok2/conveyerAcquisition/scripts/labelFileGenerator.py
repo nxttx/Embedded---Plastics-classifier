@@ -208,10 +208,10 @@ if __name__ == "__main__":
     generateLabelFile(bottle_dir, 2)
     generateLabelFile(bottlecap_dir, 3)
     generateLabelFile(fork_dir, 4)
-    generateLabelFile(knife_dir, 5)
-    generateLabelFile(pen_dir, 6)
-    generateLabelFile(spoon_dir, 7)
-    generateLabelFile(styrofoam_dir, 8)
+    # generateLabelFile(knife_dir, 5)
+    # generateLabelFile(pen_dir, 6)
+    # generateLabelFile(spoon_dir, 7)
+    # generateLabelFile(styrofoam_dir, 8)
 
     
     
