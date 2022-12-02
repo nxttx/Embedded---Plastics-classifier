@@ -99,8 +99,8 @@ def split_dataset(type, image_names, train_size, val_size):
         source_label_path = f'blok2/conveyerAcquisition/datasets/{type}/{label_name}'
 
         # Destination paths
-        target_image_folder = f'blok2/conveyerAcquisition/data/images/{split}'
-        target_label_folder = f'blok2/conveyerAcquisition/data/labels/{split}'
+        target_image_folder = f'blok2/conveyerAcquisition/transferlearn/data/images/{split}'
+        target_label_folder = f'blok2/conveyerAcquisition/transferlearn/data/labels/{split}'
 
         # Copy files
         shutil.copy(source_image_path, target_image_folder)
