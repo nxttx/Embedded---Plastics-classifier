@@ -175,11 +175,6 @@ def generateLabelFile(dir, label):
         WB = remove_background(img)
         x, y, w, h = get_bounding_box(WB)
 
-
-        x = cv2.waitKey(0)
-        if x == ord("q"):
-            break
-
         # now write label file
         # center x and y coordinates
         cx = x + w / 2
@@ -205,12 +200,12 @@ if __name__ == "__main__":
 
     # generate label files
     generateLabelFile(bag_dir, 1)
-    generateLabelFile(bottle_dir, 2)
-    generateLabelFile(bottlecap_dir, 3)
+    # generateLabelFile(bottle_dir, 2)
+    # generateLabelFile(bottlecap_dir, 3)
     generateLabelFile(fork_dir, 4)
     # generateLabelFile(knife_dir, 5)
     # generateLabelFile(pen_dir, 6)
-    # generateLabelFile(spoon_dir, 7)
+    generateLabelFile(spoon_dir, 7)
     # generateLabelFile(styrofoam_dir, 8)
 
     

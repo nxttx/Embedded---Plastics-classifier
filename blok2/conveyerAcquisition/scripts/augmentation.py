@@ -383,35 +383,40 @@ def augment_images(directory):
             # convert item 1234 to float but keep the first item a string
             labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
 
+
+            xc = float(labelOrg[1])
+            yc = float(labelOrg[2])
+            w = float(labelOrg[3])
+            h = float(labelOrg[4])
+
+            # print(xc, yc, w, h)
+
             # decenter the bounding box
-            labelOrg[1] = float(labelOrg[1] + (labelOrg[3] / 2))
-            labelOrg[2] = float(labelOrg[2] + (labelOrg[4] / 2))
-            labelOrg[3] = float(labelOrg[3])
-            labelOrg[4] = float(labelOrg[4])                # aangepast naar float(labelOrg[4]) in plaats van float(labelOrg[3])
+            '''The last thing we do in the labelfile generation is to de-center the bounding box.'''
+            x = xc - (w/2)
+            y = yc - (h/2)
 
-            # denormalize the bounding box
-            labelOrg[1] = labelOrg[1] * img.shape[1]        # waarom vermenigvuldig je met de breedte? Dan kom je toch niet op de juiste coördinaat uit?
-            labelOrg[2] = labelOrg[2] * img.shape[0]        # zelfde als hierboven, maar dan met de hoogte
-            labelOrg[3] = labelOrg[3]                       # moet je hier nog iets mee doen? Want bij de normalizing die hieronder ergens staat wordt dit nog gedeeld
-            labelOrg[4] = labelOrg[4]                       # aangepast naar labelOrg[4] in plaats van labelOrg[3] & moet je hier nog iets mee doen? Want bij de normalizing die hieronder ergens staat wordt dit nog gedeeld
+            # print(x, y, w, h)
 
+            # de normalize the bounding box
+            '''The last thing we do in get_bounding_box (labelfilegenerator) is dnormalize the bounding box.'''	
+            x = int(x * img.shape[1])
+            y = int(y * img.shape[0])
+            w = int(w * img.shape[1])
+            h = int(h * img.shape[0])
 
-            cv2.rectangle(img, (int(labelOrg[1]), int(labelOrg[2])), (int(labelOrg[3]), int(labelOrg[4])), (255, 0, 0), 20)
-
-            # create a list of all the functions
-            functions = [stretch_img_random, shear_img_random, zoom_image_random,
-                         flip_image_random, rotate_image_random, translate_image_random,
-                         higher_contrast_random, change_brightness_random, rotate_hsv_random,
-                         canny_edge, add_noise_random]
+            # print(x, y, w, h)
+            # print('-------------------------') 
+            # cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 20)
 
             # execute the functions
-            # [img, label] = stretch_img_random(
-            #     img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])
-            # [img, label] = shear_img_random(img, label)
-            # [img, label] = zoom_image_random(img, label)
-            [img, label] = flip_image_random(img, [labelOrg[1], labelOrg[2], labelOrg[3], labelOrg[4]])  
-            # [img, label] = rotate_image_random(img, label)  
-            # [img, label] = translate_image_random(img, label)  
+            [img, label] = stretch_img_random(
+                img, [x, y, w, h])
+            [img, label] = shear_img_random(img, label)
+            [img, label] = zoom_image_random(img, label)
+            [img, label] = flip_image_random(img, label)  
+            [img, label] = rotate_image_random(img, label)  
+            [img, label] = translate_image_random(img, label)  
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
             img = rotate_hsv_random(img)
@@ -419,25 +424,24 @@ def augment_images(directory):
             img = add_noise_random(img)
 
             # draw bounding box from label on image
-            top = int((label[2] - label[4]/2))          # ik heb een plaatje getekent, volgens mij moet het dit zijn
-            bottom = int(label[4])                      # ik heb een plaatje getekent, voor mij voelt het logisch als dit enkel de hoogte is, maar dit geeft een foutmelding
-            left = int((label[1] - label[3]/2))         # ik heb een plaatje getekent, volgens mij moest dit juist dit zijn, wat eerder bij top stond
-            right = int((label[3]))                     # ik heb een plaatje getekent, voor mij voelt het logisch als dit enkel de breedte is
+            x = int(label[0])
+            y = int(label[1])
+            w = int(label[2])
+            h = int(label[3])
 
-            img2 = img.copy()	
-
-            cv2.rectangle(img2, (left, top), (right, bottom), (0, 255, 0), 8)
-            cv2.imshow('image', img2)
-            if cv2.waitKey(0) & 0xFF == ord('q'):
-                sys.exit()
-            continue
+            # img2 = img.copy()	
+            # cv2.rectangle(img2, (x, y), (w, h), (0, 255, 0), 8)
+            # cv2.imshow('image', img2)
+            # if cv2.waitKey(0) & 0xFF == ord('q'):
+            #     sys.exit()
+            # continue
 
 
             # normalize the label
-            label[0] = label[0] / img.shape[1]  
-            label[1] = label[1] / img.shape[0]
-            label[2] = label[2] / img.shape[1]
-            label[3] = label[3] / img.shape[0]
+            x = x/ img.shape[1]  
+            y = y/ img.shape[0]
+            w = w/ img.shape[1]
+            h = h/ img.shape[0]
 
 
             # save the image
@@ -447,9 +451,9 @@ def augment_images(directory):
             cv2.imwrite(safeDir + '.png', img)
             # save the label
             labelFile = open(safeDir + '.txt', 'w')
-            labelFile.write(str(labelOrg[0]) + ' ' + str(label[0]) + ' ' +
-                            str(label[1]) + ' ' + str(label[2]) + ' ' +
-                            str(label[3]))
+            labelFile.write(str(labelOrg[0]) + ' ' + str(x) + ' ' +
+                            str(y) + ' ' + str(w) + ' ' +
+                            str(h))
             labelFile.close()
 
             amount += 1
