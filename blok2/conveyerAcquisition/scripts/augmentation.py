@@ -482,11 +482,11 @@ def augment_images(directory):
             h = int(label[3])
 
 
-            #### SHOW IMAGE ####
-            img2 = img.copy()	
-            cv2.rectangle(img2, (x, y), (x+w, y+h), (0, 255, 0), 8)
-            cv2.imshow('image', img2)
-            cv2.waitKey(1)
+            # #### SHOW IMAGE ####
+            # img2 = img.copy()	
+            # cv2.rectangle(img2, (x, y), (x+w, y+h), (0, 255, 0), 8)
+            # cv2.imshow('image', img2)
+            # cv2.waitKey(1)
 
             # if cv2.waitKey(0) & 0xFF == ord('q'):
             #     sys.exit()
