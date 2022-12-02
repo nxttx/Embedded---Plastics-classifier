@@ -416,7 +416,7 @@ def augment_images(directory):
         if image.endswith(".png") and not '_ignore' in image:
             amount += 1
 
-    target = 200
+    target = 1000
 
     while amount < target:
         # loop over all images in the directory
@@ -532,3 +532,11 @@ if __name__ == '__main__':
     styrofoam_dir = os.path.join(root_dir, "styrofoam")
 
     augment_images(bag_dir)
+    augment_images(bottle_dir)
+    augment_images(bottlecap_dir)
+    augment_images(fork_dir)
+    augment_images(knife_dir)
+    augment_images(pen_dir)
+    augment_images(spoon_dir)
+    augment_images(styrofoam_dir)
+
