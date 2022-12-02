@@ -199,13 +199,13 @@ if __name__ == "__main__":
 
 
     # generate label files
-    # generateLabelFile(bag_dir, 1)
-    # generateLabelFile(bottle_dir, 2)
-    # generateLabelFile(bottlecap_dir, 3)
-    # generateLabelFile(fork_dir, 4)
-    # generateLabelFile(knife_dir, 5)
-    # generateLabelFile(pen_dir, 6)
-    # generateLabelFile(spoon_dir, 7)
+    generateLabelFile(bag_dir, 1)
+    generateLabelFile(bottle_dir, 2)
+    generateLabelFile(bottlecap_dir, 3)
+    generateLabelFile(fork_dir, 4)
+    generateLabelFile(knife_dir, 5)
+    generateLabelFile(pen_dir, 6)
+    generateLabelFile(spoon_dir, 7)
     generateLabelFile(styrofoam_dir, 8)
 
     
