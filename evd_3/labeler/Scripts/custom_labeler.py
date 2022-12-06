@@ -45,19 +45,30 @@ def read_files_into_buffers(file):
 
     binary_image_filename = fileName + "_binary" + ".bmp"
 
-    binary_image = cv2.imread(binary_image_filename, 0)
+    if os.path.isfile(binary_image_filename):
+        binary_image = cv2.imread(binary_image_filename, 0)
+    else:
+        binary_image = remove_background(image)
 
 
 def save_buffers_to_files(file):
-    global binary_image
+    global image, binary_image
 
-    print("saving {}".format(file))
+    default_binary_image = remove_background(image)
 
     (fileName, fileExtension) = os.path.splitext(file)
 
     binary_image_filename = fileName + "_binary" + ".bmp"
 
-    cv2.imwrite(binary_image_filename, binary_image)
+    if not cv2.countNonZero(cv2.bitwise_xor(binary_image, default_binary_image)):
+        print("{} is the same as default, removing redundant image".format(file))
+
+        if os.path.isfile(binary_image_filename):
+            os.remove(binary_image_filename)
+        return
+    else:
+        print("saving {}".format(file))
+        cv2.imwrite(binary_image_filename, binary_image)
 
 
 classes = ["hangloose", "ignore", "paper", "rock", "scissors"]
