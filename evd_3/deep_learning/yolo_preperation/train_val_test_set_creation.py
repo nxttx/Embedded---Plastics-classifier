@@ -95,7 +95,7 @@ def generate_augmented(split, type, image_name):
     M = np.matmul(M, augment_matrices.get_zoom_matrix())
     M = np.matmul(M, augment_matrices.get_stretch_matrix())
     M = np.matmul(M, augment_matrices.get_shear_matrix())
-    M = np.matmul(M, augment_matrices.get_rotate_matrix(True))
+    M = np.matmul(M, augment_matrices.get_rotate_matrix(False))
     M = np.matmul(M, augment_matrices.get_flip_matrix())
 
     image, bounding_box = get_augmented_and_label(type, image_name, M)
