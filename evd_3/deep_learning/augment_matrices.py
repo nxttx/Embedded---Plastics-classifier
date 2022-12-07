@@ -2,11 +2,11 @@ import random
 import math
 
 
-def get_stretch_matrix(stretchCoefficient=0.4):
-    horizontalStretchFactor = random.uniform(
-        1 - stretchCoefficient, 1 + stretchCoefficient)
-    verticalStretchFactor = random.uniform(
-        1 - stretchCoefficient, 1 + stretchCoefficient)
+def get_stretch_matrix(stretchCoefficient=0.2):
+    stretchFactor = random.uniform(-stretchCoefficient, stretchCoefficient)
+
+    horizontalStretchFactor = 1 + stretchFactor
+    verticalStretchFactor = 1 - stretchFactor
 
     v1 = [horizontalStretchFactor, 0, 0]
     v2 = [0, verticalStretchFactor, 0]
@@ -52,10 +52,9 @@ def get_rotate_matrix(only_rotate_90=True):
 
 
 def get_translate_matrix(maxTranslateRange):
-    v1 = [1, 0, 0]
-    v2 = [0, 1, 0]
+    v1 = [1, 0, (random.random() - 0.5) * maxTranslateRange]
+    v2 = [0, 1, (random.random() - 0.5) * maxTranslateRange]
 
-    v3 = [(random.random() - 0.5) * maxTranslateRange,
-          (random.random() - 0.5) * maxTranslateRange, 1]
+    v3 = [0, 0, 1]
 
     return [v1, v2, v3]
