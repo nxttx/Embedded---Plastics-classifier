@@ -10,6 +10,7 @@ from itertools import repeat
 sys.path.insert(0, os.path.join("evd_3", "deep_learning"))
 from augment_and_label_exporter import get_augmented_and_label
 import augment_matrices
+import image_augments
 
 #
 # Create a folder structure for YOLOv5 training
@@ -99,6 +100,11 @@ def generate_augmented(split, type, image_name):
     M = np.matmul(M, augment_matrices.get_flip_matrix())
 
     image, bounding_box = get_augmented_and_label(type, image_name, M)
+
+    image = image_augments.rotate_hsv_random(image)
+    image = image_augments.higher_contrast_random(image)
+    image = image_augments.change_brightness_random(image)
+    image = image_augments.add_noise_random(image)
 
     label = [types[type], bounding_box[0],
              bounding_box[1], bounding_box[2], bounding_box[3]]
