@@ -9,9 +9,6 @@ import matplotlib.pyplot as plt
 import time  # for timing
 import math
 
-# scale the images (this need to change to a function that keeps the same resolution as before)
-
-
 def get_new_boundingBox(boundingBox, M, width, height):
     # convert to corner cordinates
     boundingBoxTL = [boundingBox[0] - boundingBox[2] /
@@ -145,8 +142,6 @@ def zoom_image_random(img, boundingBox=None):
 
     return output
 
-
-# flip the images horizontally
 def flip_image_random(img, boundingBox=None):
     '''
         function that flips the image randomly
@@ -195,8 +190,6 @@ def flip_image_random(img, boundingBox=None):
 
     return output
 
-# rotate the images
-# TODO BOUDING BOXES
 
 
 def rotate_image_random(img, boundingBox=None):
@@ -269,8 +262,6 @@ def rotate_image_random(img, boundingBox=None):
 
     return output
 
-# translate the images
-
 
 def translate_image_random(img, boundingBox=None):
     '''
@@ -294,9 +285,6 @@ def translate_image_random(img, boundingBox=None):
 
     return output
 
-# higher contrast
-
-
 def higher_contrast_random(img):
     '''
         function that highers the contrast of the image randomly
@@ -318,8 +306,6 @@ def higher_contrast_random(img):
     output = cv2.cvtColor(Limg, cv2.COLOR_LAB2BGR)
     return output
 
-# change brightness
-
 
 def change_brightness_random(img):
     '''
@@ -336,7 +322,6 @@ def change_brightness_random(img):
 
     return output
 
-# rotate on hsv values
 
 
 def rotate_hsv_random(img):
@@ -359,8 +344,6 @@ def rotate_hsv_random(img):
     output = cv2.cvtColor(hsv_new, cv2.COLOR_HSV2BGR)
     return output
 
-# Change to canny edge detection
-
 
 def canny_edge(img):
     '''
@@ -380,8 +363,6 @@ def canny_edge(img):
     # add canny image to the original image
     output = cv2.addWeighted(img, 0.9, canny, 0.9, 0)
     return output
-
-# Put random noise over the image
 
 
 def add_noise_random(img):
@@ -513,6 +494,9 @@ def augment_images(directory):
             labelFile.close()
 
             amount += 1
+
+            # print percentage
+            print(directory + ' - percentage: ' + str(amount/target*100) + '%')
 
             if amount >= target:
                 # break forloop and while loop
