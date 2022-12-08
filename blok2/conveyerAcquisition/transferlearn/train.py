@@ -109,15 +109,32 @@ def split_dataset(type, image_names, train_size, val_size):
 
 
 # train_size is amount of images used for training
-train_size = 1000 - 200 - 200 # 200(20%) for validation and 200(20%) for testing
-val_size = 200
+train_size = 1500 - 300 - 300 # 300(20%) for validation and 300(20%) for testing
+val_size = 300
 
-split_dataset('bag', bag_images, train_size=train_size, val_size=val_size)
-split_dataset('bottle', bottle_images, train_size=train_size, val_size=val_size)
-split_dataset('bottlecap', bottlecap_images, train_size=train_size, val_size=val_size)
-split_dataset('fork', fork_images, train_size=train_size, val_size=val_size)
-split_dataset('knife', knife_images, train_size=train_size, val_size=val_size)
-split_dataset('pen', pen_images, train_size=train_size, val_size=val_size)
-split_dataset('spoon', spoon_images, train_size=train_size, val_size=val_size)
-split_dataset('styrofoam', styrofoam_images, train_size=train_size, val_size=val_size)
+# use multiprocessing to speed up augmentation
+from multiprocessing import Pool
 
+# split_dataset('bag', bag_images, train_size=train_size, val_size=val_size)
+# split_dataset('bottle', bottle_images, train_size=train_size, val_size=val_size)
+# split_dataset('bottlecap', bottlecap_images, train_size=train_size, val_size=val_size)
+# split_dataset('fork', fork_images, train_size=train_size, val_size=val_size)
+# split_dataset('knife', knife_images, train_size=train_size, val_size=val_size)
+# split_dataset('pen', pen_images, train_size=train_size, val_size=val_size)
+# split_dataset('spoon', spoon_images, train_size=train_size, val_size=val_size)
+# split_dataset('styrofoam', styrofoam_images, train_size=train_size, val_size=val_size)
+
+
+
+# use multiprocessing to speed up the process with 8 cores and a pool
+pool = Pool(processes=8)
+pool.apply_async(split_dataset, ['bag', bag_images, train_size, val_size])
+pool.apply_async(split_dataset, ['bottle', bottle_images, train_size, val_size])
+pool.apply_async(split_dataset, ['bottlecap', bottlecap_images, train_size, val_size])
+pool.apply_async(split_dataset, ['fork', fork_images, train_size, val_size])
+pool.apply_async(split_dataset, ['knife', knife_images, train_size, val_size])
+pool.apply_async(split_dataset, ['pen', pen_images, train_size, val_size])
+pool.apply_async(split_dataset, ['spoon', spoon_images, train_size, val_size])
+pool.apply_async(split_dataset, ['styrofoam', styrofoam_images, train_size, val_size])
+pool.close()
+pool.join()

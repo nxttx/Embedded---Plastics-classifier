@@ -9,6 +9,11 @@ import matplotlib.pyplot as plt
 import time  # for timing
 import math
 
+# use multiprocessing to speed up augmentation
+from multiprocessing import Pool
+
+
+
 def get_new_boundingBox(boundingBox, M, width, height):
     # convert to corner cordinates
     boundingBoxTL = [boundingBox[0] - boundingBox[2] /
@@ -397,7 +402,7 @@ def augment_images(directory):
         if image.endswith(".png") and not '_ignore' in image:
             amount += 1
 
-    target = 1000
+    target = 1500
 
     while amount < target:
         # loop over all images in the directory
@@ -515,12 +520,26 @@ if __name__ == '__main__':
     spoon_dir = os.path.join(root_dir, "spoon")
     styrofoam_dir = os.path.join(root_dir, "styrofoam")
 
-    augment_images(bag_dir)
-    augment_images(bottle_dir)
-    augment_images(bottlecap_dir)
-    augment_images(fork_dir)
-    augment_images(knife_dir)
-    augment_images(pen_dir)
-    augment_images(spoon_dir)
-    augment_images(styrofoam_dir)
+
+    # use multiprocessing to speed up the process with 8 cores and a pool
+    pool = Pool(processes=8)
+    pool.apply_async(augment_images, [bag_dir])
+    pool.apply_async(augment_images, [bottle_dir])
+    pool.apply_async(augment_images, [bottlecap_dir])
+    pool.apply_async(augment_images, [fork_dir])
+    pool.apply_async(augment_images, [knife_dir])
+    pool.apply_async(augment_images, [pen_dir])
+    pool.apply_async(augment_images, [spoon_dir])
+    pool.apply_async(augment_images, [styrofoam_dir])
+    pool.close()
+    pool.join()
+
+    # augment_images(bag_dir)
+    # augment_images(bottle_dir)
+    # augment_images(bottlecap_dir)
+    # augment_images(fork_dir)
+    # augment_images(knife_dir)
+    # augment_images(pen_dir)
+    # augment_images(spoon_dir)
+    # augment_images(styrofoam_dir)
 
