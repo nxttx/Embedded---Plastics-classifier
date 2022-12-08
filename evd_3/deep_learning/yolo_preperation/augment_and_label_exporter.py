@@ -37,7 +37,8 @@ def get_augmented_and_label(type, file, M=np.eye(3)):
     imageMatrix = np.matmul(imageMatrix, np.float32(
         [[1, 0, -width / 2], [0, 1, -height / 2], [0, 0, 1]]))  # type: ignore
 
-    image = cv2.warpAffine(image, imageMatrix[:2], (width, height))
+    image = cv2.warpAffine(
+        image, imageMatrix[:2], (width, height), borderMode=cv2.BORDER_REPLICATE)
     binary_image = cv2.warpAffine(
         binary_image, imageMatrix[:2], (width, height))
 
