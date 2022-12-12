@@ -109,8 +109,8 @@ def split_dataset(type, image_names, train_size, val_size):
 
 
 # train_size is amount of images used for training
-train_size = 1500 - 300 - 300 # 300(20%) for validation and 300(20%) for testing
-val_size = 300
+train_size = 500 - 50 - 50 # 300(20%) for validation and 300(20%) for testing
+val_size = 50
 
 
 split_dataset('bag', bag_images, train_size=train_size, val_size=val_size)

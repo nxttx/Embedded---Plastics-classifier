@@ -402,7 +402,7 @@ def augment_images(directory):
         if image.endswith(".png") and not '_ignore' in image:
             amount += 1
 
-    target = 1500
+    target = 500
 
     while amount < target:
         # loop over all images in the directory
@@ -450,15 +450,15 @@ def augment_images(directory):
             # execute the functions
             # [img, label] = stretch_img_random(
             #     img, [x, y, w, h]) # turned off because it is gives to much transformation
-            [img, label] = shear_img_random(img,  [x, y, w, h])
-            [img, label] = zoom_image_random(img, label)
+            # [img, label] = shear_img_random(img,  [x, y, w, h])
+            [img, label] = zoom_image_random(img, [x, y, w, h])
             [img, label] = flip_image_random(img, label)  
             # [img, label] = rotate_image_random(img, label)   # turned off because it rotates the image witch could change the aspect ratio
-            [img, label] = translate_image_random(img, label)  
+            # [img, label] = translate_image_random(img, label)  
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
             img = rotate_hsv_random(img)
-            img = canny_edge(img)
+            # img = canny_edge(img)
             img = add_noise_random(img)
 
             # draw bounding box from label on image
@@ -485,6 +485,10 @@ def augment_images(directory):
             w = w/ img.shape[1]
             h = h/ img.shape[0]
 
+            # center the label
+            xc = x + (w/2)
+            yc = y + (h/2)
+
 
             # save the image
             currentEpochTime = int(round(time.time() * 1000))
@@ -493,8 +497,8 @@ def augment_images(directory):
             cv2.imwrite(safeDir + '.png', img)
             # save the label
             labelFile = open(safeDir + '.txt', 'w')
-            labelFile.write(str(labelOrg[0]) + ' ' + str(x) + ' ' +
-                            str(y) + ' ' + str(w) + ' ' +
+            labelFile.write(str(labelOrg[0]) + ' ' + str(xc) + ' ' +
+                            str(yc) + ' ' + str(w) + ' ' +
                             str(h))
             labelFile.close()
 
