@@ -1,12 +1,14 @@
 # import webserver module and open it on a new thread
-from webserver import WebServer
+from webserver import run_server
 import threading
 import time
 import sys
 import os
 import cv2
 # hacky way to import from parent directory
-sys.path.insert(0, os.path.join("..", "transferlearn", "yolov5"))
+sys.path.insert(0, os.path.join(
+    "blok2", "conveyerAcquisition", "transferlearn", "yolov5"))
+print(sys.path)
 from custom_detect import run_custom
 
 
@@ -16,7 +18,7 @@ def callback(img, results):
 
 
 # create a new thread for the webserver
-webserverThread = threading.Thread(target=WebServer)
+webserverThread = threading.Thread(target=run_server)
 webserverThread.start()
 
 # wait for the webserver to start

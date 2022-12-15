@@ -190,9 +190,7 @@ def run(
                 for *xyxy, conf, cls in reversed(pred[0]):
                     parsed_predictions.append({
                         "class": names[int(cls)],
-                        "confidence": conf.item(),
-                        "bbox": [i.item() for i in xyxy]
-                    })
+                        "confidence": conf.item()})
 
                 callback(im0.copy(), parsed_predictions)
 

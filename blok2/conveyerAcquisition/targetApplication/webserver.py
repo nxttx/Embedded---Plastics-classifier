@@ -7,7 +7,12 @@ import os
 root_path = os.path.dirname(os.path.abspath(__file__))
 
 
+def run_server():
+    api.run()
+
+
 api = Flask(__name__)
+
 
 @api.route('/api/classifications', methods=['GET'])
 def get_all():
@@ -28,6 +33,8 @@ def home():
         return handle500()
 
 # catch all and return page in htdocs
+
+
 @api.route('/<path>', methods=['GET'])
 def catch_all(path):
     try:
@@ -37,18 +44,18 @@ def catch_all(path):
         return handle404()
 
 
-
 def handle404():
     try:
-      with open(root_path + '/htdocs/statuscodes/404.html' ) as f:
-          return f.read(), 404
+        with open(root_path + '/htdocs/statuscodes/404.html') as f:
+            return f.read(), 404
     except:
         return "404", 404
 
+
 def handle500():
     try:
-      with open(root_path + '/htdocs/statuscodes/500.html' ) as f:
-          return f.read(), 500
+        with open(root_path + '/htdocs/statuscodes/500.html') as f:
+            return f.read(), 500
     except:
         return "500", 500
 
