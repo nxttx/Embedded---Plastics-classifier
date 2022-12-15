@@ -5,7 +5,7 @@ import time
 import sys
 import os
 import cv2
-from doa.classifications import Classifications
+from dao.classifications import Classifications
 # hacky way to import from parent directory
 sys.path.insert(0, os.path.join(
     "blok2", "conveyerAcquisition", "transferlearn", "yolov5"))

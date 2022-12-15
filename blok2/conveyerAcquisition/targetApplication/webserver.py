@@ -1,6 +1,6 @@
 from flask import Flask, json
 
-from doa.classifications import Classifications
+from dao.classifications import Classifications
 
 # get root path
 import os
