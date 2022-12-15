@@ -133,19 +133,6 @@ def run(
         # Second-stage classifier (optional)
         # pred = utils.general.apply_classifier(pred, classifier_model, im, im0s)
 
-        if callback != None:
-
-            parsed_predictions = []
-
-            for *xyxy, conf, cls in reversed(pred[0]):
-                parsed_predictions.append({
-                    "class": names[int(cls)],
-                    "confidence": conf,
-                    "bbox": xyxy
-                })
-
-            callback(im0s[0].copy(), parsed_predictions)
-
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
@@ -195,6 +182,17 @@ def run(
                     cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
+
+            if callback != None:
+
+                parsed_predictions = []
+
+                for *xyxy, conf, cls in reversed(pred[0]):
+                    parsed_predictions.append({
+                        "class": names[int(cls)],
+                        "confidence": conf.item()})
+
+                callback(im0.copy(), parsed_predictions)
 
             # Save results (image with detections)
             if save_img:
@@ -269,8 +267,7 @@ def main(opt):
 
 
 def test_callback(img, data):
-    # do nothing
-    pass
+    print(data)
 
 
 def run_custom(weights, source, callback):
