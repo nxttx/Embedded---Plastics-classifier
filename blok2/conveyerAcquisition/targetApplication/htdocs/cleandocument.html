@@ -1,21 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
   <head>
     <meta charset="utf-8">
     <title>Plastic classifyer | Circular Lab</title>
     <meta name="description" content="The plastic classifyer from the HAN Circular LAB ">
     <meta name="author" content="RP Boudewijn, ND Fikke, S Hezemans">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- styles -->
-    <link rel="stylesheet" href="css/materialize.min.css">
+    <style id="materializecss"></style>
+    <script>
+      async function setCss(){
+        // check if localStorage has materializecss
+        if (localStorage.getItem('CACHE_materializecss') === null) {
+          // if not, load materializecss
+          let request = await fetch(document.location.origin + '/css/materialize.min.css')
+          let css = await request.text()
+          // save materializecss to localStorage
+          localStorage.setItem('CACHE_materializecss', css)
+        }
+        // set materializecss from localStorage
+        document.getElementById('materializecss').innerHTML = localStorage.getItem('CACHE_materializecss');
+      }
+
+      setCss()
+    </script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
-    
+    <!---------------- HEADER ---------------->
+    <nav class="orange darken-1">
+      <div class="container nav-wrapper lighten-2">
+        <a href="#!" class="brand-logo center">Plastics classifyer</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger show-on-medium-and-up"><i class="material-icons">menu</i></a>
+      </div>
+    </nav>
+  
+    <ul class="sidenav center-align" id="mobile-demo">
+            <!-- Switch -->
+          <li>
+            <div class="switch streamcontainer ">
+              <label class="black-text">
+                stream on
+                <input type="checkbox" class="checkbox" data-id="stream">
+                <span class="lever"></span>
+                stream off
+              </label>
+            </div>
+          </li>
+          <li>
+            <div class="switch frameratecontainer">
+              <label class="black-text">
+                High framerate
+                <input type="checkbox" class="checkbox" data-id="framerate">
+                <span class="lever"></span>
+                Low framerate
+              </label>
+            </div>
+          </li>
+    </ul>
+    <!---------------- END HEADER ---------------->
+    <!---------------- MAIN ---------------->
+
+    <!---------------- END MAIN ---------------->
+    <!---------------- FOOTER ---------------->
+    <!---------------- END FOOTER ---------------->
 
     <!-- scripts -->
-    <script src="js/materialize.min.js"></script>
+    <script id="materializejs"></script>
+
+    <script>
+      async function setJS(){
+        // check if localStorage has materializejs
+        if (localStorage.getItem('CACHE_materializejs') === null) {
+          // if not, load materializejs
+          let request = await fetch(document.location.origin + '/js/materialize.min.js')
+          let js = await request.text()
+          // save materializejs to localStorage
+          localStorage.setItem('CACHE_materializejs', js)
+        }
+        // set materializejs from localStorage
+        document.getElementById('materializejs').innerHTML = localStorage.getItem('CACHE_materializejs');
+      }
+
+      setJS()
+    </script>
+    <script src="js/script.js"></script>
   </body>
 </html>
 
