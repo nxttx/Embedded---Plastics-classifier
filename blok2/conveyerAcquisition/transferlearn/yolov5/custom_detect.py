@@ -181,6 +181,7 @@ def run(
                     cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
                     cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
                 cv2.imshow(str(p), im0)
+                cv2.waitKey(1)  # 1 millisecond
 
             if callback != None:
 
@@ -194,8 +195,6 @@ def run(
                     })
 
                 callback(im0.copy(), parsed_predictions)
-
-            cv2.waitKey(1)  # 1 millisecond
 
             # Save results (image with detections)
             if save_img:
