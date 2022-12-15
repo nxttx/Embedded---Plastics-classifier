@@ -66,11 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(data);
     if (data.length > 0) {
       data.forEach((classification)=>{
-        // add li to the list
-        let li = document.createElement("p");
-        let time = new Date(classification.timestamp);
-        li.innerHTML = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() + " - " + classification.label + " - " + classification.percentage;
-        document.getElementById("lastClassifications").prepend(li);
+        classification.classification.forEach((tinyClassification)=>{
+          // add li to the list
+          let li = document.createElement("p");
+          let time = new Date(classification.timestamp);
+          li.innerHTML = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() + " - " + tinyClassification.class + " - " + tinyClassification.confidence;
+          document.getElementById("lastClassifications").prepend(li);
+        })
       });
     } else {
       // add li to the list
