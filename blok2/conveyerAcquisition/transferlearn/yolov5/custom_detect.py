@@ -140,8 +140,8 @@ def run(
             for *xyxy, conf, cls in reversed(pred[0]):
                 parsed_predictions.append({
                     "class": names[int(cls)],
-                    "confidence": conf,
-                    "bbox": xyxy
+                    "confidence": conf.item(),
+                    "bbox": [i.item() for i in xyxy]
                 })
 
             callback(im0s[0].copy(), parsed_predictions)
@@ -269,8 +269,7 @@ def main(opt):
 
 
 def test_callback(img, data):
-    # do nothing
-    pass
+    print(data)
 
 
 def run_custom(weights, source, callback):
