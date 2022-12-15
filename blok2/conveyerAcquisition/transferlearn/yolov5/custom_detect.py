@@ -183,6 +183,19 @@ def run(
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
 
+            if callback != None:
+
+                parsed_predictions = []
+
+                for *xyxy, conf, cls in reversed(pred[0]):
+                    parsed_predictions.append({
+                        "class": names[int(cls)],
+                        "confidence": conf.item(),
+                        "bbox": [i.item() for i in xyxy]
+                    })
+
+                callback(im0.copy(), parsed_predictions)
+
             # Save results (image with detections)
             if save_img:
                 if dataset.mode == 'image':
@@ -252,7 +265,11 @@ def parse_opt():
 
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
-    run(**vars(opt))
+    run(**vars(opt), callback=test_callback)
+
+
+def test_callback(img, data):
+    print(data)
 
 
 def run_custom(weights, source, callback):
