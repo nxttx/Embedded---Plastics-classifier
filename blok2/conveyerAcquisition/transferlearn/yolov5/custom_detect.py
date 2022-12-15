@@ -271,7 +271,7 @@ def test_callback(img, data):
 
 
 def run_custom(weights, source, callback):
-    run(weights=weights, source=source, callback=callback)
+    run(weights=weights, source=source, callback=callback, view_img=False)
 
 
 if __name__ == "__main__":
