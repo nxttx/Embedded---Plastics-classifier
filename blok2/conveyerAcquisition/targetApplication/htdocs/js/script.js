@@ -92,5 +92,65 @@ document.addEventListener('DOMContentLoaded', function() {
 
   loop();
 
+  /**
+   * command input control
+   */
+  document.getElementById("command").
+  // if keypress is enter
+  addEventListener("keyup", async function(event) {
+    if (event.keyCode === 13) {
+      // lower case the input
+      this.value = this.value.toLowerCase();
+
+      // check what the command is
+      switch (this.value) {
+        case "clear":
+          // clear the last classifications
+          document.getElementById("lastClassifications").innerHTML = "";
+          break;
+        case "help":
+          // show help
+          let help = document.createElement("p");
+
+          help.innerHTML = "<br>--- HELP ---------- <br>";
+          help.innerHTML += "clear <br>&nbsp; &nbsp;Clear the last classifications <br>";
+          help.innerHTML += "help <br>&nbsp; &nbsp;Show this help <br>";
+          help.innerHTML += "version <br>&nbsp; &nbsp;Show the version of the application <br><br>";
+
+          document.getElementById("lastClassifications").appendChild(help);
+          break;
+        case "version":
+          // show version
+          let version = document.createElement("p");
+          version.innerHTML = "Version: 1.0.0";
+          document.getElementById("lastClassifications").appendChild(version);
+          break;
+        case "hello kitty":
+          // add confettiJS script to the page
+          // check if script is already added
+          if(document.getElementById("confetti-script") == null){
+            let script = document.createElement("script");
+            script.src = 'js/confetty.min.js';
+            script.id = "confetti-script";
+            document.body.appendChild(script);
+          }
+          // show confetti
+          setTimeout(function(){
+            displayConfetty(5000)
+          }, 500);
+          break;
+        default:
+          // show error
+          let error = document.createElement("p");
+          error.innerHTML = "ERROR: Command not found";
+          document.getElementById("lastClassifications").appendChild(error);
+          break;
+      }
+
+      // clear the input
+      this.value = "";
+    } 
+  });
+
 
 });
