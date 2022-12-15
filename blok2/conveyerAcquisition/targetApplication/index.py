@@ -16,8 +16,7 @@ dao = Classifications()
 
 
 def callback(img, results):
-    for result in results:
-        dao.insert(result["class"], result["confidence"])
+    dao.insert(results)
     dao.save_image(img)
 
 
