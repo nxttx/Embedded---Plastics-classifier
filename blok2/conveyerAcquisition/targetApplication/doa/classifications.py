@@ -4,7 +4,7 @@
 import os
 import sys
 import time
-import threading
+import cv2
 import json
 
 # create class
@@ -92,4 +92,35 @@ class Classifications:
 
 
 
-        
+    # method that saves a classification image
+    def save_image(self, image):
+        '''
+          Method that saves a classification image
+          :param image: the open cv image
+          :return: the path of the image
+        '''
+        # get the current timestamp
+        current_timestamp = time.time()
+        # create the path
+        path = self.root_path + '/images/' + str(current_timestamp) + '.jpg'
+        # save the image
+        cv2.imwrite(path, image)
+        # return the path
+        return path
+
+    # method that gets the last classification image
+    def get_last_image(self):
+        '''
+          Method that gets the last classification image
+          :return: the path of the image
+        '''
+        # get all the images
+        images = os.listdir(self.root_path + '/images')
+        # check if there are images
+        if len(images) > 0:
+            # get the last image
+            last_image = images[-1]
+            # return the path
+            return self.root_path + '/images/' + last_image
+        # return false if there are no images
+        return False
