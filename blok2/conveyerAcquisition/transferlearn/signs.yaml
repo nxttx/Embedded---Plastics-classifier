@@ -4,7 +4,7 @@ val:   ../data/images/val
 test:  ../data/images/test
 
 # Number of classes
-nc: 4
+nc: 9
 
 # Class names 
     # # 0: Ignore -- empty
