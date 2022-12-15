@@ -133,6 +133,19 @@ def run(
         # Second-stage classifier (optional)
         # pred = utils.general.apply_classifier(pred, classifier_model, im, im0s)
 
+        if callback != None:
+
+            parsed_predictions = []
+
+            for *xyxy, conf, cls in reversed(pred[0]):
+                parsed_predictions.append({
+                    "class": names[int(cls)],
+                    "confidence": conf,
+                    "bbox": xyxy
+                })
+
+            callback(im0s[0].copy(), parsed_predictions)
+
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
@@ -252,7 +265,12 @@ def parse_opt():
 
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
-    run(**vars(opt))
+    run(**vars(opt), callback=test_callback)
+
+
+def test_callback(img, data):
+    # do nothing
+    pass
 
 
 def run_custom(weights, source, callback):
