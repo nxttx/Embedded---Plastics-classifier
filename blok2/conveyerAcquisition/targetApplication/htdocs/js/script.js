@@ -51,39 +51,46 @@ document.addEventListener('DOMContentLoaded', function() {
   /**
    * set all loops for fetching data
    */
-  let interval = setInterval(async ()=>{
+  async function loop(){
     if (localStorage.getItem("SETTING_stream") == "true") {
-      // update image src to get new image
-      document.getElementById("stream").src = "";
-      // update image src to get new image
-      document.getElementById("stream").src = "/api/classifications/latest/image/";
+
+      let request = await fetch("/api/classifications/latest/image")
+      let blob = await request.blob();
+      let url = URL.createObjectURL(blob);
+      document.getElementById("image-stream").src = url;
     }
 
     // update last classification list
     let response = await fetch("/api/classifications/latest");
 
     let data = await response.json();
-    console.log(data);
-    if (data.length > 0) {
-      data.forEach((classification)=>{
-        classification.classification.forEach((tinyClassification)=>{
-          // add li to the list
-          let li = document.createElement("p");
-          let time = new Date(classification.timestamp);
-          li.innerHTML = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() + " - " + tinyClassification.class + " - " + tinyClassification.confidence;
-          document.getElementById("lastClassifications").prepend(li);
-        })
-      });
-    } else {
-      // add li to the list
-      let li = document.createElement("p");
-      li.innerHTML = "No classifications yet";
-      document.getElementById("lastClassifications").prepend(li);
-    }
-    
-  },
-    ((localStorage.getItem("SETTING_interval") == false)? 1000 : 1000/5) // 1 or 5 fps
-  ); 
+
+    data.classification.forEach((classification)=>{
+      let content = document.createElement("p");
+      let time = new Date(data.timestamp);
+
+      content.innerHTML = time.getHours() + ":" ;
+      content.innerHTML += time.getMinutes() + ":" ;
+      content.innerHTML += time.getSeconds() + " > " ;
+      content.innerHTML += classification.class + " - " ;
+
+      let confidence = Number(classification.confidence)*100;
+      // round to 2 decimals
+      confidence = Math.round(confidence * 100) / 100;
+      content.innerHTML += (confidence + "%");
+
+      // add to #lastClassifications as last child
+      document.getElementById("lastClassifications").appendChild(content);
+      
+    })
+
+
+    setTimeout(loop,
+      ((localStorage.getItem("SETTING_framerate") == "false")? 1000 : 1000/5) // 1 or 5 fps
+    );
+  }
+
+  loop();
 
 
 });

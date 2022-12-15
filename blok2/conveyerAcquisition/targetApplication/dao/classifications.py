@@ -63,10 +63,15 @@ class Classifications:
             # load the json
             data = json.load(f)
             # create the new classification
+
+            current_timestamp = time.time()*1000
+            # converted to int
+            current_timestamp = int(current_timestamp)
+
             newClassification = {
                 'id': len(data) + 1,
                 'classification': classificationArray,
-                'current_timestamp': time.time()
+                'timestamp': current_timestamp
             }
             # append the new classification to the data
             data.append(newClassification)
@@ -86,8 +91,10 @@ class Classifications:
           :param image: the open cv image
           :return: the path of the image
         '''
-        # get the current timestamp
-        current_timestamp = time.time()
+        # get the current epoch time
+        current_timestamp = time.time()*1000
+        # converted to int
+        current_timestamp = int(current_timestamp)
         # create the path
         path = self.root_path + '/images/' + str(current_timestamp) + '.jpg'
         # save the image
@@ -105,11 +112,15 @@ class Classifications:
         images = os.listdir(self.root_path + '/images')
         # check if there are images
         if len(images) > 0:
-            # get the last image
-            last_image = images[-1]
-            # read the jpg file data
-            with open(self.root_path + '/images/' + last_image, 'rb') as f:
-                # return the image data
-                return f.read()
+            # remove the .jpg from the images
+            images = [image.replace('.jpg', '') for image in images]
+            # get the last made image or the image with the highest timestamp
+            last_image = max(images)
+            # add the .jpg to the image
+            last_image = last_image + '.jpg'
+            # retun the image path
+            path = self.root_path + '/images/' + last_image
+            return path
+
         # return false if there are no images
         return False

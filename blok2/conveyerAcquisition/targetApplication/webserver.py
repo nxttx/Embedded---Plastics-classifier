@@ -1,4 +1,4 @@
-from flask import Flask, json
+from flask import Flask, json, send_file
 
 from dao.classifications import Classifications
 
@@ -44,12 +44,15 @@ def get_latest():
 def get_latest_image():
     # create the object
     classifications_object = Classifications()
-    # get all the classifications
+    # get the last image path
     image = classifications_object.get_last_image()
-    # set the headers
-    headers = {'Content-Type': 'image/jpeg'}
-    # return the image
-    return image, 200, headers
+    # check if the image exists
+    if os.path.isfile(image):
+        # return the image
+        return send_file(image, mimetype='image/jpg'), 200
+    else:
+        return handle204()
+    
 
 
 

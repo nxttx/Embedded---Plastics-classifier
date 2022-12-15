@@ -70,7 +70,7 @@
         <div class="col s12 m6" id="stream">
           <div class="card">
             <div class="card-image">
-              <img  src="api/classifications/latest/image" alt="stream">
+              <img  src="api/classifications/latest/image" alt="stream" id="image-stream">
             </div>
           </div>
         </div>
@@ -78,9 +78,13 @@
           <div class="card">
             <div class="card-content">
               <span class="card-title">Last classifications</span>
-              <!-- code block -->
-              <div class="card-panel black white-text" style="max-height: 45vh; overflow: scroll;">
-                <code id="lastClassifications">
+              <div class="card-panel black white-text" style="max-height: 45vh; overflow: scroll; display: flex; flex-direction: column-reverse;">
+                <!-- terminal input easter egg -->
+                <div class="input-field" style="margin: 0 ">
+                  <input id="command" type="text" class="validate white-text" style="margin:0">
+                </div>
+                <!-- end terminal input easter egg -->
+                <code id="lastClassifications" >
                   <p>No classifications yet</p>
                 </code>
               </div>
