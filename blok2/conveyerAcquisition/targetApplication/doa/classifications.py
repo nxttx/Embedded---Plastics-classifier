@@ -33,33 +33,29 @@ class Classifications:
             data = json.load(f)
             # return the data
             return data
-
-    # method that gets a classification by id
-    def get_by_id(self, id):
+        
+    # method that gets the last classification
+    def get_last(self):
         '''
-          Method that gets a classification by id
-          :param id: the id of the classification
-          :return: the classification
+          Method that gets the last classification
+          :return: the last classification
         '''
         # open the file
         with open(self.root_path + '/classifications.json') as f:
             # load the json
             data = json.load(f)
-            # loop through the data
-            for classification in data:
-                # check if the id is the same
-                if classification['id'] == id:
-                    # return the data
-                    return classification
+            # check if there are classifications
+            if len(data) > 0:
+                # return the last classification
+                return data[-1]
             # return false if not found
             return False
 
     # method that adds a classification
-    def insert(self, label, percentage):
+    def insert(self, classificationArray):
         '''
           Method that adds a classification
-          :param label the type of the classification
-          :param percentage: the percentage of the certenty classification
+          :param classificationArray array with an object with label and percentage
           :return: the new classification
         '''
         # open the file
@@ -69,8 +65,7 @@ class Classifications:
             # create the new classification
             newClassification = {
                 'id': len(data) + 1,
-                'label': label,
-                'percentage': percentage,
+                'classification': classificationArray,
                 'current_timestamp': time.time()
             }
             # append the new classification to the data
@@ -112,7 +107,9 @@ class Classifications:
         if len(images) > 0:
             # get the last image
             last_image = images[-1]
-            # return the path
-            return self.root_path + '/images/' + last_image
+            # read the jpg file data
+            with open(self.root_path + '/images/' + last_image, 'rb') as f:
+                # return the image data
+                return f.read()
         # return false if there are no images
         return False

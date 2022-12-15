@@ -2,7 +2,7 @@
 <html lang="nl">
   <head>
     <meta charset="utf-8">
-    <title>Plastic classifyer | Circular Lab</title>
+    <title>Plastic classifier | Circular Lab</title>
     <meta name="description" content="The plastic classifyer from the HAN Circular LAB ">
     <meta name="author" content="RP Boudewijn, ND Fikke, S Hezemans">
     <!-- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> -->
@@ -32,7 +32,7 @@
     <!---------------- HEADER ---------------->
     <nav class="orange darken-1">
       <div class="container nav-wrapper lighten-2">
-        <a href="#!" class="brand-logo center">Plastics classifyer</a>
+        <a href="#!" class="brand-logo center">Plastics classifier</a>
         <a href="#" data-target="mobile-demo" class="sidenav-trigger show-on-medium-and-up"><i class="material-icons">menu</i></a>
       </div>
     </nav>
@@ -42,20 +42,20 @@
           <li>
             <div class="switch streamcontainer ">
               <label class="black-text">
-                stream on
+                Stream off
                 <input type="checkbox" class="checkbox" data-id="stream">
                 <span class="lever"></span>
-                stream off
+                Stream on
               </label>
             </div>
           </li>
           <li>
             <div class="switch frameratecontainer">
               <label class="black-text">
-                High framerate
+                Low framerate
                 <input type="checkbox" class="checkbox" data-id="framerate">
                 <span class="lever"></span>
-                Low framerate
+                High framerate
               </label>
             </div>
           </li>
@@ -64,12 +64,13 @@
     <!---------------- MAIN ---------------->
 
     <!-- container with a flex box and two sides. One for the stream, one ul list with the last classifications -->
+    <br><br>
     <div class="container">
       <div class="row">
-        <div class="col s12 m6">
+        <div class="col s12 m6" id="stream">
           <div class="card">
             <div class="card-image">
-              <img id="stream" src="img/stream.jpg" alt="stream">
+              <img  src="api/classifications/latest/image" alt="stream">
             </div>
           </div>
         </div>
@@ -77,9 +78,13 @@
           <div class="card">
             <div class="card-content">
               <span class="card-title">Last classifications</span>
-              <ul id="lastClassifications" class="collection">
-                <li class="collection-item">No classifications yet</li>
-              </ul>
+              <!-- code block -->
+              <div class="card-panel black white-text" style="max-height: 45vh; overflow: scroll;">
+                <code id="lastClassifications">
+                  <p>No classifications yet</p>
+                </code>
+              </div>
+
             </div>
           </div>
         </div>
