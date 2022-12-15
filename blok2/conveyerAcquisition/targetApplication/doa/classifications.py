@@ -91,18 +91,5 @@ class Classifications:
             return newClassification
 
 
-    # method that adds a array of classifications
-    def insert_many(self, classifications):
-        '''
-          Method that adds a array of classifications
-          :param classifications: the array of classifications
-          :return: the new classifications
-        '''
-        # loop through the classifications
-        for classification in classifications:
-            # add the classification
-            self.insert(classification['label'], classification['xc'], classification['yc'], classification['w'], classification['h'], classification['percentage'])
-        # return the classifications
-        return classifications
-        
+
         
