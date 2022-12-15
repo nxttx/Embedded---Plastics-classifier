@@ -29,9 +29,18 @@ def home():
 
 # catch all and return page in htdocs
 @api.route('/<path>', methods=['GET'])
-def catch_all(path):
+def catchCMD(path):
     try:
         with open(root_path + '/htdocs/' + path) as f:
+            return f.read()
+    except:
+        return handle404()
+
+# catch all and return page in htdocs
+@api.route('/<path>/<path2>', methods=['GET'])
+def catchPage(path, path2):
+    try:
+        with open(root_path + '/htdocs/' + path + '/' + path2) as f:
             return f.read()
     except:
         return handle404()

@@ -55,14 +55,10 @@ class Classifications:
             return False
 
     # method that adds a classification
-    def insert(self, label, xc, yc, w, h, percentage):
+    def insert(self, label, percentage):
         '''
           Method that adds a classification
           :param label the type of the classification
-          :param xc: the centerd x coordinate of the classification (normalized)
-          :param yc: the centerd y coordinate of the classification (normalized)
-          :param w: the width of the classification (normalized)
-          :param h: the height of the classification (normalized)
           :param percentage: the percentage of the certenty classification
           :return: the new classification
         '''
@@ -74,10 +70,6 @@ class Classifications:
             newClassification = {
                 'id': len(data) + 1,
                 'label': label,
-                'xc': xc,
-                'yc': yc,
-                'w': w,
-                'h': h,
                 'percentage': percentage,
                 'current_timestamp': time.time()
             }
