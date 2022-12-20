@@ -58,6 +58,9 @@ class Classifications:
           :param classificationArray array with an object with label and percentage
           :return: the new classification
         '''
+        # check if there are too many images or classifications in db and remove the oldest
+        self.check_db()
+
         # open the file
         with open(self.root_path + '/classifications.json') as f:
             # load the json
@@ -91,6 +94,10 @@ class Classifications:
           :param image: the open cv image
           :return: the path of the image
         '''
+        # check if there are too many images or classifications in db and remove the oldest
+        self.check_db()
+        
+
         # get the current epoch time
         current_timestamp = time.time()*1000
         # converted to int
@@ -124,3 +131,34 @@ class Classifications:
 
         # return false if there are no images
         return False
+
+
+    # check if there are too many images or classifications in db and remove the oldest
+    def check_db(self):
+        '''
+          Method that checks if there are too many images or classifications in db and remove the oldest
+          :return: true if there are too many images or classifications in db and remove the oldest
+        '''
+        # get all the images
+        images = os.listdir(self.root_path + '/images')
+        # get all the classifications
+        classifications = self.get_all()
+        # check if there are too many images or classifications
+        if len(images) > 50 or len(classifications) > 100:
+            # get the oldest image
+            oldest_image = min(images)
+            # get the oldest classification
+            oldest_classification = classifications[0]
+            # remove the oldest image
+            os.remove(self.root_path + '/images/' + oldest_image)
+            # remove the oldest classification
+            classifications.pop(0)
+            # open the file
+            with open(self.root_path + '/classifications.json', 'w') as f:
+                # dump the data to the file
+                json.dump(classifications, f, indent=4)
+            # return true
+            return True
+        # return false if there are not too many images or classifications
+        return False
+
