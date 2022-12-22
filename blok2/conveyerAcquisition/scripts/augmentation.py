@@ -13,7 +13,6 @@ import math
 from multiprocessing import Pool
 
 
-
 def get_new_boundingBox(boundingBox, M, width, height):
     # convert to corner cordinates
     boundingBoxTL = [boundingBox[0] - boundingBox[2] /
@@ -147,6 +146,7 @@ def zoom_image_random(img, boundingBox=None):
 
     return output
 
+
 def flip_image_random(img, boundingBox=None):
     '''
         function that flips the image randomly
@@ -175,11 +175,11 @@ def flip_image_random(img, boundingBox=None):
         h = int(boundingBox[3])
 
         # print(x, y, w, h)
-        # print('-------------------------') 
-        cv2.rectangle(binaryImage, (x, y), (x+w, y+h), 255, 0)
+        # print('-------------------------')
+        cv2.rectangle(binaryImage, (x, y), (x + w, y + h), 255, 0)
 
         # cv2.imshow('binaryImage', binaryImage)
-        
+
         # flip the binary image
         binaryImage = cv2.flip(binaryImage, randomNumber)
 
@@ -191,10 +191,7 @@ def flip_image_random(img, boundingBox=None):
         # return the flipped image and the new bounding box
         return output, [x, y, w, h]
 
-
-
     return output
-
 
 
 def rotate_image_random(img, boundingBox=None):
@@ -222,12 +219,12 @@ def rotate_image_random(img, boundingBox=None):
 
     randomNumber = random.randint(0, 3)
 
-    if(randomNumber == 3): # no rotation
-        if boundingBox != None: # if there is a bounding box
-            return img, boundingBox # return the image and the bounding box
-        else: # if there is no bounding box
-            return img # return the image
-    
+    if (randomNumber == 3):  # no rotation
+        if boundingBox != None:  # if there is a bounding box
+            return img, boundingBox  # return the image and the bounding box
+        else:  # if there is no bounding box
+            return img  # return the image
+
     output = cv2.rotate(img, randomNumber)
 
     if boundingBox != None:
@@ -248,11 +245,11 @@ def rotate_image_random(img, boundingBox=None):
         h = int(boundingBox[3])
 
         # print(x, y, w, h)
-        # print('-------------------------') 
-        cv2.rectangle(binaryImage, (x, y), (x+w, y+h), 255, 0)
+        # print('-------------------------')
+        cv2.rectangle(binaryImage, (x, y), (x + w, y + h), 255, 0)
 
         # cv2.imshow('binaryImage', binaryImage)
-        
+
         # flip the binary image
         binaryImage = cv2.rotate(binaryImage, randomNumber)
 
@@ -263,7 +260,6 @@ def rotate_image_random(img, boundingBox=None):
 
         # return the flipped image and the new bounding box
         return output, [x, y, w, h]
-
 
     return output
 
@@ -277,9 +273,9 @@ def translate_image_random(img, boundingBox=None):
     # Store height and width of the image
     height, width = img.shape[:2]
     # for the new height, take a random number between -height and height
-    new_height = random.randint(-height/4, height/4)
+    new_height = random.randint(-height / 4, height / 4)
     # for the new width, take a random number between -width and width
-    new_width = random.randint(-width/4, width/4)
+    new_width = random.randint(-width / 4, width / 4)
     # Create translation matrix
     M = np.float32([[1, 0, new_width], [0, 1, new_height]])  # type: ignore
     # Apply translation
@@ -289,6 +285,7 @@ def translate_image_random(img, boundingBox=None):
         return output, get_new_boundingBox(boundingBox, M, width, height)
 
     return output
+
 
 def higher_contrast_random(img):
     '''
@@ -326,7 +323,6 @@ def change_brightness_random(img):
     output = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
 
     return output
-
 
 
 def rotate_hsv_random(img):
@@ -402,7 +398,7 @@ def augment_images(directory):
         if image.endswith(".png") and not '_ignore' in image:
             amount += 1
 
-    target = 500
+    target = 1500
 
     while amount < target:
         # loop over all images in the directory
@@ -421,7 +417,6 @@ def augment_images(directory):
             # convert item 1234 to float but keep the first item a string
             labelOrg = [labelOrg[0]] + [float(i) for i in labelOrg[1:]]
 
-
             xc = float(labelOrg[1])
             yc = float(labelOrg[2])
             w = float(labelOrg[3])
@@ -431,20 +426,20 @@ def augment_images(directory):
 
             # decenter the bounding box
             '''The last thing we do in the labelfile generation is to de-center the bounding box.'''
-            x = xc - (w/2)
-            y = yc - (h/2)
+            x = xc - (w / 2)
+            y = yc - (h / 2)
 
             # print(x, y, w, h)
 
             # de normalize the bounding box
-            '''The last thing we do in get_bounding_box (labelfilegenerator) is dnormalize the bounding box.'''	
+            '''The last thing we do in get_bounding_box (labelfilegenerator) is dnormalize the bounding box.'''
             x = int(x * img.shape[1])
             y = int(y * img.shape[0])
             w = int(w * img.shape[1])
             h = int(h * img.shape[0])
 
             # print(x, y, w, h)
-            # print('-------------------------') 
+            # print('-------------------------')
             # cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 20)
 
             # execute the functions
@@ -452,9 +447,9 @@ def augment_images(directory):
             #     img, [x, y, w, h]) # turned off because it is gives to much transformation
             # [img, label] = shear_img_random(img,  [x, y, w, h])
             [img, label] = zoom_image_random(img, [x, y, w, h])
-            [img, label] = flip_image_random(img, label)  
+            [img, label] = flip_image_random(img, label)
             # [img, label] = rotate_image_random(img, label)   # turned off because it rotates the image witch could change the aspect ratio
-            # [img, label] = translate_image_random(img, label)  
+            # [img, label] = translate_image_random(img, label)
             img = higher_contrast_random(img)
             img = change_brightness_random(img)
             img = rotate_hsv_random(img)
@@ -467,9 +462,8 @@ def augment_images(directory):
             w = int(label[2])
             h = int(label[3])
 
-
             # #### SHOW IMAGE ####
-            # img2 = img.copy()	
+            # img2 = img.copy()
             # cv2.rectangle(img2, (x, y), (x+w, y+h), (0, 255, 0), 8)
             # cv2.imshow('image', img2)
             # cv2.waitKey(1)
@@ -478,17 +472,15 @@ def augment_images(directory):
             #     sys.exit()
             # continue
 
-
             # normalize the label
-            x = x/ img.shape[1]  
-            y = y/ img.shape[0]
-            w = w/ img.shape[1]
-            h = h/ img.shape[0]
+            x = x / img.shape[1]
+            y = y / img.shape[0]
+            w = w / img.shape[1]
+            h = h / img.shape[0]
 
             # center the label
-            xc = x + (w/2)
-            yc = y + (h/2)
-
+            xc = x + (w / 2)
+            yc = y + (h / 2)
 
             # save the image
             currentEpochTime = int(round(time.time() * 1000))
@@ -505,7 +497,8 @@ def augment_images(directory):
             amount += 1
 
             # print percentage
-            print(directory + ' - percentage: ' + str(amount/target*100) + '%')
+            print(directory + ' - percentage: ' +
+                  str(amount / target * 100) + '%')
 
             if amount >= target:
                 # break forloop and while loop
@@ -523,7 +516,6 @@ if __name__ == '__main__':
     pen_dir = os.path.join(root_dir, "pen")
     spoon_dir = os.path.join(root_dir, "spoon")
     styrofoam_dir = os.path.join(root_dir, "styrofoam")
-
 
     # use multiprocessing to speed up the process with 8 cores and a pool
     pool = Pool(processes=8)
@@ -546,4 +538,3 @@ if __name__ == '__main__':
     # augment_images(pen_dir)
     # augment_images(spoon_dir)
     # augment_images(styrofoam_dir)
-
