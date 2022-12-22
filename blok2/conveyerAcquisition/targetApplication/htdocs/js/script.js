@@ -53,36 +53,43 @@ document.addEventListener('DOMContentLoaded', function() {
    */
   async function loop(){
     if (localStorage.getItem("SETTING_stream") == "true") {
-
-      let request = await fetch("/api/classifications/latest/image")
-      let blob = await request.blob();
-      let url = URL.createObjectURL(blob);
-      document.getElementById("image-stream").src = url;
+      try {
+        let request = await fetch("/api/classifications/latest/image")
+        let blob = await request.blob();
+        let url = URL.createObjectURL(blob);
+        document.getElementById("image-stream").src = url;
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     // update last classification list
-    let response = await fetch("/api/classifications/latest");
-
-    let data = await response.json();
-
-    data.classification.forEach((classification)=>{
-      let content = document.createElement("p");
-      let time = new Date(data.timestamp);
-
-      content.innerHTML = time.getHours() + ":" ;
-      content.innerHTML += time.getMinutes() + ":" ;
-      content.innerHTML += time.getSeconds() + " > " ;
-      content.innerHTML += classification.class + " - " ;
-
-      let confidence = Number(classification.confidence)*100;
-      // round to 2 decimals
-      confidence = Math.round(confidence * 100) / 100;
-      content.innerHTML += (confidence + "%");
-
-      // add to #lastClassifications as last child
-      document.getElementById("lastClassifications").appendChild(content);
-      
-    })
+    try {
+      let response = await fetch("/api/classifications/latest");
+  
+      let data = await response.json();
+  
+      data.classification.forEach((classification)=>{
+        let content = document.createElement("p");
+        let time = new Date(data.timestamp);
+  
+        content.innerHTML = time.getHours() + ":" ;
+        content.innerHTML += time.getMinutes() + ":" ;
+        content.innerHTML += time.getSeconds() + " > " ;
+        content.innerHTML += classification.class + " - " ;
+  
+        let confidence = Number(classification.confidence)*100;
+        // round to 2 decimals
+        confidence = Math.round(confidence * 100) / 100;
+        content.innerHTML += (confidence + "%");
+  
+        // add to #lastClassifications as last child
+        document.getElementById("lastClassifications").appendChild(content);
+        
+      })
+    } catch (error) {
+      console.error(error);
+    }
 
 
     setTimeout(loop,
