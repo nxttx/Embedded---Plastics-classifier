@@ -414,7 +414,7 @@ class LoadStreams:
             # fps = cap.get(cv2.CAP_PROP_FPS)  # warning: may return 0 or nan
             fps = 30  # TODO check if this is correct
             # self.frames[i] = max(int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), 0) or float('inf')  # infinite stream fallback
-            self.frames[i] = 0  # TODO check if this is correct
+            self.frames[i] = -1  # TODO check if this is correct
             self.fps[i] = max((fps if math.isfinite(fps) else 0) % 100, 0) or 30  # 30 FPS fallback
 
             img = ueye.get_data(mem_ptr, width, height,
