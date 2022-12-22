@@ -423,7 +423,8 @@ class LoadStreams:
 
             # _, self.imgs[i] = cap.read()  # guarantee first frame
             self.imgs[i] = img
-            self.threads[i] = Thread(target=self.update, args=([i, cap, s]), daemon=True)
+            self.threads[i] = Thread(target=self.update, args=([i, mem_ptr, width, height,
+                                                                bitspixel, lineinc, s]), daemon=True)
             LOGGER.info(f"{st} Success ({self.frames[i]} frames {w}x{h} at {self.fps[i]:.2f} FPS)")
             self.threads[i].start()
         LOGGER.info('')  # newline
