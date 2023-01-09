@@ -8,7 +8,8 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def run_server():
-    api.run()
+    # todo: find way to insert correct ip
+    api.run(host="192.168.137.102", port=5000)
 
 
 api = Flask(__name__)
