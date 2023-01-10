@@ -22,7 +22,7 @@ hcam, mem_ptr, width, height, bitspixel, lineinc = initialize_ueye_cam()
 window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
 # Window
 while cv2.getWindowProperty("CSI Camera", 0) >= 0:
-    frame = get_ueye_image(hcam, mem_ptr, width, height, bitspixel, lineinc)
+    frame = get_ueye_image(mem_ptr, width, height, bitspixel, lineinc)
 
     # detection process
     objs = Object_detector.detect(frame)
