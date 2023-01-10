@@ -1,5 +1,5 @@
 import cv2
-cam = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+cam = cv2.VideoCapture(0)
 print("Cam is opend:" + str(cam.isOpened()))
 while cv2.waitKey(1) != 27:
     print("Cam is opend:" + str(cam.isOpened()))
