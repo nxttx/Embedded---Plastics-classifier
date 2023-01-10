@@ -6,7 +6,7 @@ from elements.yolo import OBJ_DETECTION
 Object_classes = ['ignore','Bag', 'Bottle', 'Bottlecap', 'Fork', 'Knife', 'Pen', 'Spoon', 'Styrofoam']
 
 Object_colors = list(np.random.rand(80,3)*255)
-Object_detector = OBJ_DETECTION('Transferlearn.pt', Object_classes)
+Object_detector = OBJ_DETECTION('Transferlearn.mlmodel', Object_classes)
 
 hcam, mem_ptr, width, height, bitspixel, lineinc = initialize_ueye_cam()
 
