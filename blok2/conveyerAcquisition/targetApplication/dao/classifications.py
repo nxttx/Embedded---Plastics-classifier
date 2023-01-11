@@ -18,7 +18,16 @@ class Classifications:
             with open(self.root_path + '/classifications.json', 'w') as f:
                 # write the json to the file
                 json.dump([], f, indent=4)
-                
+        else :
+            # clear the file
+            with open(self.root_path + '/classifications.json', 'w') as f:
+                # write the json to the file
+                json.dump([], f, indent=4)
+
+        # check if image folder exists
+        if not os.path.isdir(self.root_path + '/images'):
+            # create the folder
+            os.mkdir(self.root_path + '/images')
 
 
     # method that gets all the classifications
