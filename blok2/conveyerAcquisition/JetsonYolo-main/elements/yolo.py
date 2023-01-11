@@ -8,8 +8,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class OBJ_DETECTION():
     def __init__(self, model_path, classes):
+        print(device)
         self.classes = classes
-        self.yolo_model = attempt_load(weights=model_path, map_location=device)
+        self.yolo_model = attempt_load(weights=model_path, fuse=False)
         self.input_width = 320
 
     def detect(self,main_img):
