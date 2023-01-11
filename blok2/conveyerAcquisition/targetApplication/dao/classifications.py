@@ -30,7 +30,10 @@ class Classifications:
         # open the file
         with open(self.root_path + '/classifications.json') as f:
             # load the json
-            data = json.load(f)
+            try:
+                data = json.load(f)
+            except:
+                data = []
             # return the data
             return data
         
@@ -148,11 +151,10 @@ class Classifications:
             # get the oldest image
             oldest_image = min(images)
             # get the oldest classification
-            oldest_classification = classifications[0]
+            if len(classifications) > 0:
+                classifications.pop(0)
             # remove the oldest image
             os.remove(self.root_path + '/images/' + oldest_image)
-            # remove the oldest classification
-            classifications.pop(0)
             # open the file
             with open(self.root_path + '/classifications.json', 'w') as f:
                 # dump the data to the file
