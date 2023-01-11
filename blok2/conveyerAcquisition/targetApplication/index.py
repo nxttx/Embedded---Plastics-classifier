@@ -9,7 +9,8 @@ from dao.classifications import Classifications
 # hacky way to import from parent directory
 sys.path.insert(0, os.path.join(
     "blok2", "conveyerAcquisition", "JetsonYolo-main"))
-from JetsonYolo import yoloRun
+# from JetsonYolo import yoloRun
+from JetsonYoloUeye import yoloRun
 
 
 dao = Classifications()

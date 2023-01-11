@@ -17,16 +17,16 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
         # Window
         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             ret, frame = cap.read()
-            ssim= 100
+            changePercentage= 100
             if prevousFrame is not None:
-                ssim = cv2.absdiff(prevousFrame, frame)
-                ssim = ssim.astype(np.uint8)
-                ssim = (np.count_nonzero(ssim) * 100)/ ssim.size
-                print('difference: ' + str(ssim))
+                changePercentage = cv2.absdiff(prevousFrame, frame)
+                changePercentage = changePercentage.astype(np.uint8)
+                changePercentage = (np.count_nonzero(changePercentage) * 100)/ changePercentage.size
+                print('difference: ' + str(changePercentage))
 
             returnObjects = []
 
-            if ret and ssim > 69:
+            if ret and changePercentage > 69:
                 # detection process
                 objs = Object_detector.detect(frame)
 
@@ -48,8 +48,9 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
             # call callback function
             if callback is not None:
                 if len(returnObjects) == 0:
-                    returnObjects.append({'class': 'ignore', 'confidence': str(ssim/100)})
+                    returnObjects.append({'class': 'ignore', 'confidence': str(changePercentage/100)})
                 callback(frame, returnObjects)
+                
             cv2.imshow("CSI Camera", frame)
 
             keyCode = cv2.waitKey(30)
