@@ -9,17 +9,27 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
     Object_colors = list(np.random.rand(80,3)*255)
     Object_detector = OBJ_DETECTION(weights, Object_classes)
 
+    prevousFrame = None
+
     cap = cv2.VideoCapture(0)
     if cap.isOpened():
         window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
         # Window
         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             ret, frame = cap.read()
-            if ret:
+            ssim= 100
+            if prevousFrame is not None:
+                ssim = cv2.absdiff(prevousFrame, frame)
+                ssim = ssim.astype(np.uint8)
+                ssim = (np.count_nonzero(ssim) * 100)/ ssim.size
+                print('difference: ' + str(ssim))
+
+            returnObjects = []
+
+            if ret and ssim > 69:
                 # detection process
                 objs = Object_detector.detect(frame)
 
-                returnObjects = []
 
                 # plotting
                 for obj in objs:
@@ -33,10 +43,15 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
                     # create new object with: class and confidence
                     returnObjects.append({'class': label, 'confidence': str(score)})
 
-                # call callback function
-                if callback is not None:
-                    callback(frame, returnObjects)
+                prevousFrame = frame
+            
+            # call callback function
+            if callback is not None:
+                if len(returnObjects) == 0:
+                    returnObjects.append({'class': 'ignore', 'confidence': str(ssim/100)})
+                callback(frame, returnObjects)
             cv2.imshow("CSI Camera", frame)
+
             keyCode = cv2.waitKey(30)
             if keyCode == ord('q'):
                 break
