@@ -22,7 +22,6 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
                 changePercentage = cv2.absdiff(prevousFrame, frame)
                 changePercentage = changePercentage.astype(np.uint8)
                 changePercentage = (np.count_nonzero(changePercentage) * 100)/ changePercentage.size
-                print('difference: ' + str(changePercentage))
 
             returnObjects = []
 
@@ -50,7 +49,7 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
                 if len(returnObjects) == 0:
                     returnObjects.append({'class': 'ignore', 'confidence': str(changePercentage/100)})
                 callback(frame, returnObjects)
-                
+
             cv2.imshow("CSI Camera", frame)
 
             keyCode = cv2.waitKey(30)

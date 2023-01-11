@@ -24,7 +24,6 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
             changePercentage = cv2.absdiff(prevousFrame, frame)
             changePercentage = changePercentage.astype(np.uint8)
             changePercentage = (np.count_nonzero(changePercentage) * 100)/ changePercentage.size
-            print('difference: ' + str(changePercentage))
 
         returnObjects = []
 
