@@ -8,9 +8,12 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def run_server():
-    import socket
-    Local_IP_Addr = socket.gethostbyname(socket.gethostname())
-    api.run(host=Local_IP_Addr, port=80)
+    try:
+        import socket
+        Local_IP_Addr = socket.gethostbyname(socket.gethostname())
+        api.run(host=Local_IP_Addr, port=80)
+    except:
+        api.run()
 
 
 api = Flask(__name__)

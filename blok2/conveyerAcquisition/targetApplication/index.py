@@ -8,8 +8,9 @@ from dao.classifications import Classifications
 
 # hacky way to import from parent directory
 sys.path.insert(0, os.path.join(
-    "blok2", "conveyerAcquisition", "transferlearn", "yolov5"))
-# from custom_detect import run_custom
+    "blok2", "conveyerAcquisition", "JetsonYolo-main"))
+# from JetsonYolo import yoloRun
+from JetsonYoloUeye import yoloRun
 
 
 dao = Classifications()
@@ -28,5 +29,5 @@ webserverThread.start()
 
 
 # import the rest of the modules
-# run_custom(os.path.join("blok2", "conveyerAcquisition", "transferlearn",
-#            "weigths_of_training", "weights", "best00.15.pt"), 0, callback)
+yoloRun(callback, weights=os.path.join(
+    "blok2", "conveyerAcquisition", "JetsonYolo-main", 'Transferlearn.pt'))
