@@ -3,6 +3,12 @@ import Jetson.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
 def setup(pin, direction):
+  if direction == 'out':
+    direction = GPIO.OUT
+  else:
+    direction = GPIO.IN
+    
+
   # if pin array
   if isinstance(pin, list):
     for p in pin:
