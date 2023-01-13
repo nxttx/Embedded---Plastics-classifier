@@ -27,7 +27,7 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
 
         returnObjects = []
 
-        if changePercentage > 69:
+        if True : #changePercentage > 69:
             # detection process
             objs = Object_detector.detect(frame)
 
@@ -37,9 +37,9 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
                 label = obj['label']
                 score = obj['score']
                 [(xmin,ymin),(xmax,ymax)] = obj['bbox']
-                color = Object_colors[Object_classes.index(label)]
-                frame = cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), color, 2) 
-                frame = cv2.putText(frame, f'{label} ({str(score)})', (xmin,ymin), cv2.FONT_HERSHEY_SIMPLEX , 0.75, color, 1, cv2.LINE_AA)
+                # color = Object_colors[Object_classes.index(label)]
+                # frame = cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), color, 2) 
+                # frame = cv2.putText(frame, f'{label} ({str(score)})', (xmin,ymin), cv2.FONT_HERSHEY_SIMPLEX , 0.75, color, 1, cv2.LINE_AA)
                 # create new object with: class and confidence
                 returnObjects.append({'class': label, 'confidence': str(score)})
 
@@ -51,7 +51,7 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
                 returnObjects.append({'class': 'ignore', 'confidence': str(changePercentage/100)})
             callback(frame, returnObjects)
 
-        cv2.imshow("CSI Camera", frame)
+        # cv2.imshow("CSI Camera", frame)
         keyCode = cv2.waitKey(30)
         if keyCode == ord('q'):
             break
