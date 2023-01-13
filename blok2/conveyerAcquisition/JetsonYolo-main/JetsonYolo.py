@@ -25,7 +25,7 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
 
             returnObjects = []
 
-            if ret and changePercentage > 69:
+            if ret #and changePercentage > 69: # turned off temporary 
                 # detection process
                 objs = Object_detector.detect(frame)
 

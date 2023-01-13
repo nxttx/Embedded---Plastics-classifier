@@ -28,6 +28,16 @@ class Classifications:
         if not os.path.isdir(self.root_path + '/images'):
             # create the folder
             os.mkdir(self.root_path + '/images')
+        # else clear the folder
+        else:
+            # get all the files
+            files = os.listdir(self.root_path + '/images')
+            # loop through the files
+            for file in files:
+                # remove the file
+                os.remove(self.root_path + '/images/' + file)
+
+                
 
 
     # method that gets all the classifications
