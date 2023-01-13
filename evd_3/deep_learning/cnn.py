@@ -6,7 +6,9 @@ import cv2
 model = keras.models.load_model(os.path.join(
     "evd_3", "deep_learning", "cnn_notebook", "best_model"))
 
-cam = cv2.VideoCapture(0)
+class_names = ['hangloose', 'paper', 'rock', 'scissors']
+
+cam = cv2.VideoCapture(3)
 print("Cam is opend:" + str(cam.isOpened()))
 while cv2.waitKey(1) != 27:
     ret, frame = cam.read()
@@ -15,6 +17,8 @@ while cv2.waitKey(1) != 27:
         print('No frame')
         continue
 
-    prediction = model(frame)
-
     cv2.imshow("Frame", frame)
+    frame = cv2.resize(frame, (320, 180)).reshape(1, 180, 320, 3)
+
+    prediction = model.predict(frame)
+    print(class_names[prediction.argmax()])
