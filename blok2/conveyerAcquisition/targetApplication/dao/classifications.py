@@ -7,36 +7,38 @@ import time
 import cv2
 import json
 
-# create class
+root_path = os.path.dirname(os.path.abspath(__file__))
+# check if the file exists
+if not os.path.isfile(root_path + '/classifications.json'):
+    # create the file
+    with open(root_path + '/classifications.json', 'w') as f:
+        # write the json to the file
+        json.dump([], f, indent=4)
+else :
+    # clear the file
+    with open(root_path + '/classifications.json', 'w') as f:
+        # write the json to the file
+        json.dump([], f, indent=4)
+
+# check if image folder exists
+if not os.path.isdir(root_path + '/images'):
+    # create the folder
+    os.mkdir(root_path + '/images')
+# else clear the folder
+else:
+    # get all the files
+    files = os.listdir(root_path + '/images')
+    # loop through the files
+    for file in files:
+        # remove the file
+        os.remove(root_path + '/images/' + file)
+
+
+
 class Classifications:
     def __init__(self):
         # get root path
         self.root_path = os.path.dirname(os.path.abspath(__file__))
-        # check if the file exists
-        if not os.path.isfile(self.root_path + '/classifications.json'):
-            # create the file
-            with open(self.root_path + '/classifications.json', 'w') as f:
-                # write the json to the file
-                json.dump([], f, indent=4)
-        else :
-            # clear the file
-            with open(self.root_path + '/classifications.json', 'w') as f:
-                # write the json to the file
-                json.dump([], f, indent=4)
-
-        # check if image folder exists
-        if not os.path.isdir(self.root_path + '/images'):
-            # create the folder
-            os.mkdir(self.root_path + '/images')
-        # else clear the folder
-        else:
-            # get all the files
-            files = os.listdir(self.root_path + '/images')
-            # loop through the files
-            for file in files:
-                # remove the file
-                os.remove(self.root_path + '/images/' + file)
-
                 
 
 

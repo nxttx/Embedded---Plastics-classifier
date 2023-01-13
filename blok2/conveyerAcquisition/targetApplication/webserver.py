@@ -10,9 +10,15 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 def run_server():
     try:
         import socket
-        Local_IP_Addr = socket.gethostbyname(socket.gethostname())
-        api.run(host=Local_IP_Addr, port=80)
-    except:
+        ipAddresses = [i[4][0] for i in socket.getaddrinfo(socket.gethostname(), None)]
+        print(ipAddresses)
+        for ip in ipAddresses:
+            if ip =='192.168.178.1': # ueye camera 
+                continue
+
+            api.run(host=ip, port=80)
+    except Exception as e:
+        print(e)
         api.run()
 
 
