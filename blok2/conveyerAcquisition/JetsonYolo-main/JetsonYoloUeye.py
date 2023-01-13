@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from ueyeCustom import initialize_ueye_cam, get_ueye_image, close_ueye_camera
 from elements.yolo import OBJ_DETECTION
-import threading
+from multiprocessing import Pool
 
 def yoloRun(callback, weights='Transferlearn.pt' ):
     Object_classes = ['ignore','Bag', 'Bottle', 'Bottlecap', 'Fork', 'Knife', 'Pen', 'Spoon', 'Styrofoam']
@@ -15,10 +15,15 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
     
 
     window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
+
+    # create thread pool
+    pool = Pool(processes=4)
+
     # Window
     while cv2.getWindowProperty("CSI Camera", 0) >= 0:
 
-        threading.Thread(target=classify, args=(Object_detector, callback, mem_ptr, width, height, bitspixel, lineinc)).start()
+        # pool add task
+        pool.apply(classify, (Object_detector, callback, mem_ptr, width, height, bitspixel, lineinc))
 
         # cv2.imshow("CSI Camera", frame)
         keyCode = cv2.waitKey(250)
