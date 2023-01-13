@@ -16,18 +16,17 @@ import image_augments
 target_data_path = os.path.join(
     "evd_3", "deep_learning", "cnn_preperation", "data")
 original_dataset_path = os.path.join("evd_3", "original_dataset")
+ignore_dataset_path = os.path.join(
+    "blok2", "transferlearn_test", "datasets", "coco128", "images", "train2017")
 
 generate_dataset = False
 
 if not os.path.exists(target_data_path):
     for split in ['train', 'val', 'test']:
-        for type in ['hangloose', 'paper', 'rock', 'scissors']:
+        for type in ['hangloose', 'paper', 'rock', 'scissors', 'ignore']:
             os.makedirs(os.path.join(target_data_path, split, type))
     generate_dataset = True
 
-#
-# Check for duplicate images
-#
 import glob
 
 
@@ -42,27 +41,13 @@ def get_filenames(folder):
     return filenames
 
 
-# Dog and cat image filename sets
 hangloose_images = get_filenames(
     os.path.join(original_dataset_path, 'hangloose'))
 paper_images = get_filenames(os.path.join(original_dataset_path, 'paper'))
 rock_images = get_filenames(os.path.join(original_dataset_path, 'rock'))
 scissors_images = get_filenames(
     os.path.join(original_dataset_path, 'scissors'))
-
-
-#
-# Check for duplicates
-#
-duplicates = hangloose_images & paper_images & rock_images & scissors_images
-
-print(duplicates)
-
-# no duplicates found
-
-#
-# Split Image and Label Files into Train, Val, and Test Sets
-#
+ignore_images = get_filenames(ignore_dataset_path)
 
 import numpy as np
 
@@ -70,6 +55,7 @@ hangloose_images = np.array(list(hangloose_images))
 paper_images = np.array(list(paper_images))
 rock_images = np.array(list(rock_images))
 scissors_images = np.array(list(scissors_images))
+ignore_images = np.array(list(ignore_images))
 
 
 # Use the same random seed for reproducability
@@ -78,15 +64,13 @@ np.random.shuffle(hangloose_images)
 np.random.shuffle(paper_images)
 np.random.shuffle(rock_images)
 np.random.shuffle(scissors_images)
+np.random.shuffle(ignore_images)
 
 
-types = {"hangloose": 0, "paper": 1, "rock": 2, "scissors": 3}
+types = {"hangloose": 0, "paper": 1, "rock": 2, "scissors": 3, "ignore": 4}
 
 
 def generate_augmented(split, type, image_name):
-    # Label filename
-    label_name = image_name.replace('.jpg', '.txt')
-
     M = np.eye(3)
     M = np.matmul(M, augment_matrices.get_translate_matrix(0.5))
     M = np.matmul(M, augment_matrices.get_zoom_matrix())
@@ -95,7 +79,11 @@ def generate_augmented(split, type, image_name):
     M = np.matmul(M, augment_matrices.get_rotate_matrix(False))
     M = np.matmul(M, augment_matrices.get_flip_matrix())
 
-    image = cv2.imread(os.path.join(original_dataset_path, type, image_name))
+    if type == "ignore":
+        image = cv2.imread(os.path.join(ignore_dataset_path, image_name))
+    else:
+        image = cv2.imread(os.path.join(
+            original_dataset_path, type, image_name))
     height, width = image.shape[:2]
 
     imageMatrix = np.eye(3)
@@ -113,7 +101,7 @@ def generate_augmented(split, type, image_name):
     image = image_augments.change_brightness_random(image)
     image = image_augments.add_noise_random(image)
 
-    image = cv2.resize(image, (int(height / 4), int(width / 4)))
+    image = cv2.resize(image, (320, 180))  # hardcode image size
 
     # Destination paths
     target_image_folder = os.path.join(
@@ -158,7 +146,12 @@ def create_dataset(type, image_names, train_percentage, val_percentage, number_o
 
 
 if generate_dataset:
-    number_of_instances = 2000
+    number_of_instances = 4000
+
+    print("Creating ignore dataset")
+    startTime = time.time()
+    create_dataset('ignore', ignore_images, 0.6, 0.2, number_of_instances)
+    print("Creating scissors dataset took: ", time.time() - startTime)
 
     print("Creating hangloose dataset")
     startTime = time.time()
