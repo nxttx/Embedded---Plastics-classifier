@@ -1,4 +1,4 @@
-import threading
+from multiprocessing import Pool
 import time
 import sys
 import os
@@ -36,9 +36,11 @@ def startWebServer():
 setup(37, 'in')
 webserverOn = input(37)
 if(webserverOn):
-    # create a new thread for the webserver
-    webserverThread = threading.Thread(target= startWebServer)
-    webserverThread.start()
+    # create a new multiprocess for the webserver
+    webserverThread = Pool(1)
+    webserverThread.apply_async(startWebServer)
+    # webserverThread = threading.Thread(target= startWebServer)
+    # webserverThread.start()
 
 
 # import the rest of the modules
