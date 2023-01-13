@@ -113,6 +113,8 @@ def generate_augmented(split, type, image_name):
     image = image_augments.change_brightness_random(image)
     image = image_augments.add_noise_random(image)
 
+    image = cv2.resize(image, (int(height / 4), int(width / 4)))
+
     # Destination paths
     target_image_folder = os.path.join(
         target_data_path, split, type)
@@ -156,7 +158,7 @@ def create_dataset(type, image_names, train_percentage, val_percentage, number_o
 
 
 if generate_dataset:
-    number_of_instances = 1000
+    number_of_instances = 2000
 
     print("Creating hangloose dataset")
     startTime = time.time()
