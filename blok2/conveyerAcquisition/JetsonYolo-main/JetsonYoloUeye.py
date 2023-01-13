@@ -12,22 +12,27 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
     # get camera
     hcam, mem_ptr, width, height, bitspixel, lineinc = initialize_ueye_cam()
     
-    prevousFrame = None
 
     window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
     # Window
     while cv2.getWindowProperty("CSI Camera", 0) >= 0:
+
+        # cv2.imshow("CSI Camera", frame)
+        keyCode = cv2.waitKey(30)
+        if keyCode == ord('q'):
+            break
+
+    close_ueye_camera(hcam)
+    cv2.destroyAllWindows()
+
+def classify(callback, mem_ptr, width, height, bitspixel, lineinc):
         frame = get_ueye_image(mem_ptr, width, height, bitspixel, lineinc)
         changePercentage= 100
 
-        if prevousFrame is not None:
-            changePercentage = cv2.absdiff(prevousFrame, frame)
-            changePercentage = changePercentage.astype(np.uint8)
-            changePercentage = (np.count_nonzero(changePercentage) * 100)/ changePercentage.size
-
+        
         returnObjects = []
 
-        if True : #changePercentage > 69:
+
             # detection process
             objs = Object_detector.detect(frame)
 
@@ -43,21 +48,12 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
                 # create new object with: class and confidence
                 returnObjects.append({'class': label, 'confidence': str(score)})
 
-            prevousFrame = frame
-
         # call callback function
         if callback is not None:
             if len(returnObjects) == 0:
                 returnObjects.append({'class': 'ignore', 'confidence': str(changePercentage/100)})
             callback(frame, returnObjects)
 
-        # cv2.imshow("CSI Camera", frame)
-        keyCode = cv2.waitKey(30)
-        if keyCode == ord('q'):
-            break
-
-    close_ueye_camera(hcam)
-    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     yoloRun(None)
