@@ -20,13 +20,14 @@ dao = Classifications()
 
 def callback(img, results):
     if (webserverOn):
-        # get result with highest confidence
-        result = max(results, key=lambda x: x['confidence'])
-        # turn led on based on result
-        turnLedOnBasedOnItem(result['class'])
+        dao.insert(results)
+        dao.save_image(img)
         
-    dao.insert(results)
-    dao.save_image(img)
+    # get result with highest confidence
+    result = max(results, key=lambda x: x['confidence'])
+    # turn led on based on result
+    turnLedOnBasedOnItem(result['class'])
+
 
 
 def startWebServer():
