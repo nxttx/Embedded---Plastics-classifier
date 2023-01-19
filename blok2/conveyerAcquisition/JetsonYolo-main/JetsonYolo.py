@@ -6,17 +6,29 @@ from elements.yolo import OBJ_DETECTION
 def yoloRun(callback, weights='Transferlearn.pt' ):
     Object_classes = ['ignore','Bag', 'Bottle', 'Bottlecap', 'Fork', 'Knife', 'Pen', 'Spoon', 'Styrofoam']
 
-    Object_colors = list(np.random.rand(80,3)*255)
+    Object_colors = [(0,0,0), (0,0,255), (0,255,0), (255,0,0), (0,255,255), (255,0,255), (255,255,0), (255,255,255), (128,128,128)]
     Object_detector = OBJ_DETECTION(weights, Object_classes)
 
     prevousFrame = None
+    objs = None
 
     cap = cv2.VideoCapture(0)
     if cap.isOpened():
-        window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
+        window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)        
+
         # Window
         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             ret, frame = cap.read()
+
+            # remove 25% of the left side of the image
+            frame = frame[:, int(frame.shape[1]*0.25):]
+            # remove 25% of the right side of the image
+            frame = frame[:, :int(frame.shape[1]*0.75)]
+            # remove 25% of the top side of the image
+            frame = frame[int(frame.shape[0]*0.10):, :]
+            # remove 25% of the bottom side of the image
+            frame = frame[:int(frame.shape[0]*0.60), :]
+
             changePercentage= 100
             if prevousFrame is not None:
                 changePercentage = cv2.absdiff(prevousFrame, frame)
@@ -25,24 +37,25 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
 
             returnObjects = []
 
-            if ret #and changePercentage > 69: # turned off temporary 
+            if ret and changePercentage > 80: # turned off temporary 
                 # detection process
                 objs = Object_detector.detect(frame)
-
-
-                # plotting
-                for obj in objs:
-                    # print(obj)
-                    label = obj['label']
-                    score = obj['score']
-                    [(xmin,ymin),(xmax,ymax)] = obj['bbox']
-                    color = Object_colors[Object_classes.index(label)]
-                    frame = cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), color, 2) 
-                    frame = cv2.putText(frame, f'{label} ({str(score)})', (xmin,ymin), cv2.FONT_HERSHEY_SIMPLEX , 0.75, color, 1, cv2.LINE_AA)
-                    # create new object with: class and confidence
-                    returnObjects.append({'class': label, 'confidence': str(score)})
-
                 prevousFrame = frame
+
+
+
+            # plotting the results
+            for obj in objs:
+                # print(obj)
+                label = obj['label']
+                score = obj['score']
+                [(xmin,ymin),(xmax,ymax)] = obj['bbox']
+                color = Object_colors[Object_classes.index(label)]
+                frame = cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), color, 2) 
+                frame = cv2.putText(frame, f'{label} ({str(score)})', (xmin,ymin), cv2.FONT_HERSHEY_SIMPLEX , 0.75, color, 1, cv2.LINE_AA)
+                # create new object with: class and confidence
+                returnObjects.append({'class': label, 'confidence': str(score)})
+
             
             # call callback function
             if callback is not None:
