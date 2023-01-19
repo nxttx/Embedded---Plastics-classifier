@@ -31,7 +31,7 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
         
         returnObjects = []
 
-        if changePercentage > 80: # TODO CHECK IF UEYE THINKS THE SAME
+        if changePercentage > 50: # TODO CHECK IF UEYE THINKS THE SAME
             # detection process
             objs = Object_detector.detect(frame)
             prevousFrame = frame
@@ -54,7 +54,7 @@ def yoloRun(callback, weights='Transferlearn.pt' ):
                 returnObjects.append({'class': 'ignore', 'confidence': ''})
             callback(frame, returnObjects)
 
-        # cv2.imshow("CSI Camera", frame)
+        cv2.imshow("CSI Camera", frame)
         keyCode = cv2.waitKey(200)
         if keyCode == ord('q'):
             break

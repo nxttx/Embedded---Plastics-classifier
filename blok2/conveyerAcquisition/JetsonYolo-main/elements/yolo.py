@@ -6,11 +6,13 @@ from utils.general import non_max_suppression
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
+
 class OBJ_DETECTION():
     def __init__(self, model_path, classes):
         print(device)
         self.classes = classes
-        self.yolo_model = attempt_load(weights=model_path, fuse=False)
+        self.yolo_model = attempt_load(weights=model_path, fuse=False, device=device).to(device)
         self.input_width = 320
 
     def detect(self,main_img):
@@ -31,7 +33,7 @@ class OBJ_DETECTION():
         
         if pred[0] is not None and len(pred):
             for p in pred[0]:
-                score = np.round(p[4].cpu().detach().numpy(),2)
+                score = np.round(p[4].to(device).detach().numpy(),2)
                 label = self.classes[int(p[5])]
                 xmin = int(p[0] * main_img.shape[1] /self.input_width)
                 ymin = int(p[1] * main_img.shape[0] /new_height)
