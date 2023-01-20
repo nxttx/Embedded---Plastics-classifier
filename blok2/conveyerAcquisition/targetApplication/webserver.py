@@ -9,17 +9,24 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 
 def run_server():
     try:
-        import socket
-        ipAddresses = [i[4][0] for i in socket.getaddrinfo(socket.gethostname(), None)]
-        print(ipAddresses)
-        for ip in ipAddresses:
-            if ip =='192.168.178.1': # ueye camera 
-                continue
+        # # old whay that requires super user/admin:
+        # import socket
+        # ipAddresses = [i[4][0] for i in socket.getaddrinfo(socket.gethostname(), None)]
+        # for ip in ipAddresses:
+        #     if ip =='192.168.178.1': # ueye camera 
+        #         continue
+        from netifaces import ifaddresses
+        ip = ""
+        for link in ifaddresses('wlan0'):
+            if '192.168' in ifaddresses('wlan0')[link][0]['addr']:
+                ip = ifaddresses('wlan0')[link][0]['addr']
 
-            api.run(host=ip, port=80)
+
+        api.run(host=ip, port=5000)
+
     except Exception as e:
         print(e)
-        api.run()
+        # api.run()
 
 
 api = Flask(__name__)
