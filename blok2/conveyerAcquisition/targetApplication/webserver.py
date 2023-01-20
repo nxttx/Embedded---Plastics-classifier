@@ -22,7 +22,7 @@ def run_server():
                 ip = ifaddresses('wlan0')[link][0]['addr']
 
 
-        api.run(host=ip, port=5000)
+        api.run(host=ip, port=2023)
 
     except Exception as e:
         print(e)
